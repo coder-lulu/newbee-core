@@ -29,7 +29,10 @@ core_api
 core_rpc
 core-api
 core-rpc
+rpc
+api
 nohup.out
+Dockerfile-*
 
 # VsCode debug files
 __debug*
