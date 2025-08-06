@@ -29,10 +29,14 @@ core_api
 core_rpc
 core-api
 core-rpc
-rpc
-api
 nohup.out
 Dockerfile-*
+api/api
+rpc/rpc
+*.exe
+*.dll
+*.so
+*.dylib
 
 # VsCode debug files
 __debug*
