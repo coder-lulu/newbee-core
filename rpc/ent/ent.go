@@ -21,6 +21,7 @@ import (
 	"github.com/coder-lulu/newbee-core/rpc/ent/oauthprovider"
 	"github.com/coder-lulu/newbee-core/rpc/ent/position"
 	"github.com/coder-lulu/newbee-core/rpc/ent/role"
+	"github.com/coder-lulu/newbee-core/rpc/ent/tenant"
 	"github.com/coder-lulu/newbee-core/rpc/ent/token"
 	"github.com/coder-lulu/newbee-core/rpc/ent/user"
 )
@@ -80,7 +81,7 @@ var (
 )
 
 // checkColumn checks if the column exists in the given table.
-func checkColumn(table, column string) error {
+func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			api.Table:              api.ValidColumn,
@@ -92,11 +93,12 @@ func checkColumn(table, column string) error {
 			oauthprovider.Table:    oauthprovider.ValidColumn,
 			position.Table:         position.ValidColumn,
 			role.Table:             role.ValidColumn,
+			tenant.Table:           tenant.ValidColumn,
 			token.Table:            token.ValidColumn,
 			user.Table:             user.ValidColumn,
 		})
 	})
-	return columnCheck(table, column)
+	return columnCheck(t, c)
 }
 
 // Asc applies the given fields in ASC order.

@@ -8,16 +8,16 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/suyuan32/simple-admin-common/config"
-	"github.com/suyuan32/simple-admin-common/enum/common"
-	"github.com/suyuan32/simple-admin-common/i18n"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/datapermctx"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entenum"
+	"github.com/coder-lulu/newbee-common/config"
+	"github.com/coder-lulu/newbee-common/enum/common"
+	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/orm/ent/entenum"
 	"google.golang.org/grpc/status"
 
-	"github.com/suyuan32/simple-admin-common/utils/encrypt"
-	"github.com/suyuan32/simple-admin-common/utils/jwt"
-	"github.com/suyuan32/simple-admin-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/utils/encrypt"
+	"github.com/coder-lulu/newbee-common/utils/jwt"
+	"github.com/coder-lulu/newbee-common/utils/pointy"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
@@ -93,7 +93,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 
 		token, err := jwt.NewJwtToken(l.svcCtx.Config.Auth.AccessSecret, time.Now().Unix(),
 			l.svcCtx.Config.Auth.AccessExpire, jwt.WithOption("userId", user.Id), jwt.WithOption("roleId",
-				strings.Join(user.RoleCodes, ",")), jwt.WithOption("deptId", user.DepartmentId))
+				strings.Join(user.RoleCodes, ",")), jwt.WithOption("deptId", user.DepartmentId), jwt.WithOption("tenantId", user.TenantId))
 		if err != nil {
 			return nil, err
 		}

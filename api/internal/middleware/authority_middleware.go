@@ -7,13 +7,13 @@ import (
 
 	"github.com/casbin/casbin/v2"
 	"github.com/redis/go-redis/v9"
-	"github.com/suyuan32/simple-admin-common/config"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/rolectx"
+	"github.com/coder-lulu/newbee-common/config"
+	"github.com/coder-lulu/newbee-common/orm/ent/entctx/rolectx"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
-	"github.com/suyuan32/simple-admin-common/utils/jwt"
+	"github.com/coder-lulu/newbee-common/utils/jwt"
 )
 
 type AuthorityMiddleware struct {
@@ -38,6 +38,14 @@ func (m *AuthorityMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 		roleIds, err := rolectx.GetRoleIDFromCtx(r.Context())
 		if err != nil {
 			httpx.Error(w, err)
+			return
+		}
+
+		// get tenant id
+		tenantId := r.Context().Value("tenantId")
+		if tenantId == nil {
+			logx.Errorw("the tenantId is not in context", logx.Field("path", r.URL.Path))
+			httpx.Error(w, errorx.NewApiForbiddenError("Tenant information is missing"))
 			return
 		}
 

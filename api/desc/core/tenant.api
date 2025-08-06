@@ -1,0 +1,138 @@
+import "../base.api"
+
+type (
+    // The response data of tenant information | 租户信息
+    TenantInfo {
+        BaseIDInfo
+
+        // Status | 状态 1: normal 2: ban
+        Status *uint32 `json:"status,optional" validate:"omitempty,range=[1:2]"`
+
+        // Tenant name | 租户名称
+        Name *string `json:"name,optional" validate:"omitempty,max=50"`
+
+        // Tenant code | 租户代码
+        Code *string `json:"code,optional" validate:"omitempty,max=30"`
+
+        // Tenant domain | 租户域名
+        Domain *string `json:"domain,optional" validate:"omitempty,max=100"`
+
+        // Contact person | 联系人
+        ContactPerson *string `json:"contactPerson,optional" validate:"omitempty,max=50"`
+
+        // Contact phone | 联系电话
+        ContactPhone *string `json:"contactPhone,optional" validate:"omitempty,max=18"`
+
+        // Contact email | 联系邮箱
+        ContactEmail *string `json:"contactEmail,optional" validate:"omitempty,email,max=80"`
+
+        // Tenant description | 租户描述
+        Description *string `json:"description,optional" validate:"omitempty,max=200"`
+
+        // Expire time | 过期时间
+        ExpireTime *int64 `json:"expireTime,optional"`
+
+        // Maximum users | 最大用户数
+        MaxUsers *uint32 `json:"maxUsers,optional" validate:"omitempty,gt=0"`
+
+        // Tenant settings | 租户配置
+        Settings []TenantSettings `json:"settings,optional"`
+    }
+
+    // Tenant settings | 租户配置
+    TenantSettings {
+        // Key | 配置键
+        Key *string `json:"key,optional" validate:"omitempty,max=50"`
+
+        // Value | 配置值
+        Value *string `json:"value,optional" validate:"omitempty,max=200"`
+    }
+
+    // The response data of tenant list | 租户列表数据
+    TenantListResp {
+        BaseDataInfo
+
+        // Tenant list data | 租户列表数据
+        Data TenantListInfo `json:"data"`
+    }
+
+    // Tenant list data | 租户列表数据
+    TenantListInfo {
+        BaseListInfo
+
+        // The tenant list data | 租户列表数据
+        Data  []TenantInfo  `json:"data"`
+    }
+
+    // Get tenant list request params | 租户列表请求参数
+    TenantListReq {
+        PageInfo
+
+        // Tenant Name | 租户名称
+        Name *string `json:"name,optional" validate:"omitempty,max=50"`
+
+        // Tenant Code | 租户代码
+        Code *string `json:"code,optional" validate:"omitempty,max=30"`
+
+        // Tenant Domain | 租户域名
+        Domain *string `json:"domain,optional" validate:"omitempty,max=100"`
+
+        // Contact person | 联系人
+        ContactPerson *string `json:"contactPerson,optional" validate:"omitempty,max=50"`
+
+        // Contact phone | 联系电话
+        ContactPhone *string `json:"contactPhone,optional" validate:"omitempty,max=18"`
+
+        // Contact email | 联系邮箱
+        ContactEmail *string `json:"contactEmail,optional" validate:"omitempty,email,max=80"`
+
+        // Description | 描述
+        Description *string `json:"description,optional" validate:"omitempty,max=200"`
+
+        // Expire time | 过期时间
+        ExpireTime *int64 `json:"expireTime,optional"`
+
+        // Maximum users | 最大用户数
+        MaxUsers *uint32 `json:"maxUsers,optional"`
+    }
+
+    // Tenant information response | 租户信息返回体
+    TenantInfoResp {
+        BaseDataInfo
+
+        // Tenant information | 租户数据
+        Data TenantInfo `json:"data"`
+    }
+)
+
+@server(
+    jwt: Auth
+    group: tenant
+    middleware: Authority
+)
+
+service Core {
+    // Create tenant information | 创建租户
+    @handler createTenant
+    post /tenant/create (TenantInfo) returns (BaseMsgResp)
+
+    // Update tenant information | 更新租户
+    @handler updateTenant
+    post /tenant/update (TenantInfo) returns (BaseMsgResp)
+
+    // Delete tenant information | 删除租户信息
+    @handler deleteTenant
+    post /tenant/delete (IDsReq) returns (BaseMsgResp)
+
+    // Get tenant list | 获取租户列表
+    @handler getTenantList
+    post /tenant/list (TenantListReq) returns (TenantListResp)
+
+    // Get Tenant by ID | 通过ID获取租户
+    @handler getTenantById
+    post /tenant (IDReq) returns (TenantInfoResp)
+
+    // Initialize tenant data | 初始化租户数据
+    @handler initTenantData
+    post /tenant/init (IDReq) returns (BaseMsgResp)
+}

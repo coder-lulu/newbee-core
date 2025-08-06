@@ -8,9 +8,9 @@ import (
 
 	"github.com/duke-git/lancet/v2/slice"
 	"github.com/redis/go-redis/v9"
-	"github.com/suyuan32/simple-admin-common/i18n"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/datapermctx"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/rolectx"
+	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/orm/ent/entctx/rolectx"
 	"github.com/coder-lulu/newbee-core/rpc/ent/role"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/dberrorhandler"

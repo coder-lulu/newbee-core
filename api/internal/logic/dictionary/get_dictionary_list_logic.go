@@ -9,7 +9,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/suyuan32/simple-admin-common/i18n"
+	"github.com/coder-lulu/newbee-common/i18n"
 )
 
 type GetDictionaryListLogic struct {

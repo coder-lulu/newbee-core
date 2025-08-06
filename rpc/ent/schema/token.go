@@ -8,7 +8,7 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/gofrs/uuid/v5"
 
-	"github.com/suyuan32/simple-admin-common/orm/ent/mixins"
+	"github.com/coder-lulu/newbee-common/orm/ent/mixins"
 )
 
 type Token struct {
@@ -35,6 +35,7 @@ func (Token) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.UUIDMixin{},
 		mixins.StatusMixin{},
+		mixins.TenantMixin{},
 	}
 }
 

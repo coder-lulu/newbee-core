@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/suyuan32/simple-admin-common/i18n"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/datapermctx"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/deptctx"
+	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/orm/ent/entctx/deptctx"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"

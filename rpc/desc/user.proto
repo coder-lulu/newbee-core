@@ -21,6 +21,7 @@ message UserInfo {
   repeated string role_codes = 16;
   repeated string role_names = 17;
   optional string department_name = 18;
+  optional uint64 tenant_id = 19;
 }
 
 message UserListResp {

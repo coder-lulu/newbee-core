@@ -5,24 +5,21 @@ import (
 	"errors"
 	"time"
 
-	"github.com/bsm/redislock"
-	"github.com/suyuan32/simple-admin-common/config"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entenum"
-
-	"github.com/coder-lulu/newbee-core/rpc/ent/role"
-	"github.com/coder-lulu/newbee-core/rpc/internal/utils/redisfunc"
-
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/suyuan32/simple-admin-common/enum/common"
-	"github.com/suyuan32/simple-admin-common/i18n"
-	"github.com/suyuan32/simple-admin-common/msg/logmsg"
-	"github.com/suyuan32/simple-admin-common/utils/encrypt"
-	"github.com/zeromicro/go-zero/core/errorx"
-
+	"github.com/bsm/redislock"
+	"github.com/coder-lulu/newbee-common/config"
+	"github.com/coder-lulu/newbee-common/enum/common"
+	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/msg/logmsg"
+	"github.com/coder-lulu/newbee-common/orm/ent/entenum"
+	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/utils/encrypt"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
+	"github.com/coder-lulu/newbee-core/rpc/ent/role"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"
+	"github.com/coder-lulu/newbee-core/rpc/internal/utils/redisfunc"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
-
+	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -43,7 +40,7 @@ func NewInitDatabaseLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Init
 func (l *InitDatabaseLogic) InitDatabase(_ *core.Empty) (*core.BaseResp, error) {
 	// If your mysql speed is high, comment the code below.
 	// Because the context deadline will reach if the database is too slow
-	l.ctx = context.Background()
+	l.ctx = hooks.NewSystemContext(context.Background())
 
 	// add lock to avoid duplicate initialization
 	locker := redislock.New(l.svcCtx.Redis)

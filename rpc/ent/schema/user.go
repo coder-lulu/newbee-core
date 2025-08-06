@@ -1,26 +1,16 @@
 package schema
 
 import (
-	"context"
-
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/datapermctx"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/deptctx"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/userctx"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entenum"
-	"github.com/suyuan32/simple-admin-common/orm/ent/mixins"
-	"github.com/zeromicro/go-zero/core/errorx"
+	"github.com/coder-lulu/newbee-common/orm/ent/mixins"
 
-	"github.com/coder-lulu/newbee-core/rpc/ent/intercept"
 	mixins2 "github.com/coder-lulu/newbee-core/rpc/ent/schema/mixins"
-	"github.com/coder-lulu/newbee-core/rpc/ent/user"
 )
 
 type User struct {
@@ -57,6 +47,7 @@ func (User) Mixin() []ent.Mixin {
 		mixins.UUIDMixin{},
 		mixins.StatusMixin{},
 		mixins2.SoftDeleteMixin{},
+		mixins.TenantMixin{},
 	}
 }
 
@@ -72,64 +63,6 @@ func (User) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("username", "email").
 			Unique(),
-	}
-}
-
-func (User) Interceptors() []ent.Interceptor {
-	return []ent.Interceptor{
-		intercept.Func(func(ctx context.Context, q intercept.Query) error {
-			dataScope, err := datapermctx.GetScopeFromCtx(ctx)
-			if err != nil {
-				return err
-			}
-
-			switch dataScope {
-			case entenum.DataPermAll:
-			case entenum.DataPermCustomDept:
-				customDeptIds, err := datapermctx.GetCustomDeptFromCtx(ctx)
-				if err != nil {
-					return err
-				}
-				q.WhereP(func(selector *sql.Selector) {
-					sql.FieldIn(user.FieldDepartmentID, customDeptIds...)(selector)
-				})
-			case entenum.DataPermOwnDeptAndSub:
-				subDeptIds, err := datapermctx.GetSubDeptFromCtx(ctx)
-				if err != nil {
-					return err
-				}
-
-				q.WhereP(func(selector *sql.Selector) {
-					sql.FieldIn(user.FieldDepartmentID, subDeptIds...)(selector)
-				})
-			case entenum.DataPermOwnDept:
-				deptId, err := deptctx.GetDepartmentIDFromCtx(ctx)
-				if err != nil {
-					return err
-				}
-
-				q.WhereP(func(selector *sql.Selector) {
-					selector.Where(sql.EQ(user.FieldDepartmentID, deptId))
-				})
-			case entenum.DataPermSelf:
-				fieldName, err := datapermctx.GetFilterFieldFromCtx(ctx)
-				if err != nil {
-					return err
-				}
-
-				userId, err := userctx.GetUserIDFromCtx(ctx)
-				if err != nil {
-					return err
-				}
-
-				q.WhereP(func(selector *sql.Selector) {
-					selector.Where(sql.EQ(fieldName, userId))
-				})
-			default:
-				return errorx.NewInvalidArgumentError("data scope not supported")
-			}
-			return nil
-		}),
 	}
 }
 

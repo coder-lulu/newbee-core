@@ -22,6 +22,8 @@ const (
 	FieldStatus = "status"
 	// FieldSort holds the string denoting the sort field in the database.
 	FieldSort = "sort"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldName holds the string denoting the name field in the database.
 	FieldName = "name"
 	// FieldAncestors holds the string denoting the ancestors field in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldStatus,
 	FieldSort,
+	FieldTenantID,
 	FieldName,
 	FieldAncestors,
 	FieldLeader,
@@ -107,6 +110,8 @@ var (
 	DefaultStatus uint8
 	// DefaultSort holds the default value on creation for the "sort" field.
 	DefaultSort uint32
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint64
 	// DefaultParentID holds the default value on creation for the "parent_id" field.
 	DefaultParentID uint64
 )
@@ -137,6 +142,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // BySort orders the results by the sort field.
 func BySort(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSort, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByName orders the results by the name field.

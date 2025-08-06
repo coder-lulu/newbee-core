@@ -1,0 +1,33 @@
+{{/*
+Copyright 2022-present Ryan SU (github.com/suyuan32). All rights reserved.
+This source code is licensed under the Apache 2.0 license found
+in the LICENSE file in the root directory of this source tree.
+*/}}
+
+{{/* gotype: entgo.io/ent/entc/gen.Graph */}}
+
+{{ define "tenant_where" }}
+    {{ $pkg := base $.Config.Package }}
+    {{ template "header" $ }}
+    {{ template "import" $ }}
+
+    {{/* Loop over all nodes and add WhereHasTenantWith method for entities with tenant_id field */}}
+    {{ range $node := $.Nodes }}
+        {{/* Check if the node has tenant_id field */}}
+        {{ $hasTenantID := false }}
+        {{ range $field := $node.Fields }}
+            {{ if eq $field.Name "tenant_id" }}
+                {{ $hasTenantID = true }}
+            {{ end }}
+        {{ end }}
+        
+        {{ if $hasTenantID }}
+            {{ $queryName := print $node.Name "Query" }}
+            
+            // WhereHasTenantWith adds a tenant filter to the query.
+            func ({{ $node.Receiver }} *{{ $queryName }}) WhereHasTenantWith(tenantID uint64) {
+                {{ $node.Receiver }}.predicates = append({{ $node.Receiver }}.predicates, {{ lower $node.Name }}.TenantIDEQ(tenantID))
+            }
+        {{ end }}
+    {{ end }}
+{{ end }} 

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	uuid "github.com/gofrs/uuid/v5"
 	"github.com/coder-lulu/newbee-core/rpc/ent/predicate"
+	uuid "github.com/gofrs/uuid/v5"
 )
 
 // ID filters vertices based on their ID field.
@@ -68,6 +68,11 @@ func UpdatedAt(v time.Time) predicate.Token {
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v uint8) predicate.Token {
 	return predicate.Token(sql.FieldEQ(FieldStatus, v))
+}
+
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v uint64) predicate.Token {
+	return predicate.Token(sql.FieldEQ(FieldTenantID, v))
 }
 
 // UUID applies equality check predicate on the "uuid" field. It's identical to UUIDEQ.
@@ -223,6 +228,46 @@ func StatusIsNil() predicate.Token {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.Token {
 	return predicate.Token(sql.FieldNotNull(FieldStatus))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v uint64) predicate.Token {
+	return predicate.Token(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v uint64) predicate.Token {
+	return predicate.Token(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...uint64) predicate.Token {
+	return predicate.Token(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...uint64) predicate.Token {
+	return predicate.Token(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDGT applies the GT predicate on the "tenant_id" field.
+func TenantIDGT(v uint64) predicate.Token {
+	return predicate.Token(sql.FieldGT(FieldTenantID, v))
+}
+
+// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
+func TenantIDGTE(v uint64) predicate.Token {
+	return predicate.Token(sql.FieldGTE(FieldTenantID, v))
+}
+
+// TenantIDLT applies the LT predicate on the "tenant_id" field.
+func TenantIDLT(v uint64) predicate.Token {
+	return predicate.Token(sql.FieldLT(FieldTenantID, v))
+}
+
+// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
+func TenantIDLTE(v uint64) predicate.Token {
+	return predicate.Token(sql.FieldLTE(FieldTenantID, v))
 }
 
 // UUIDEQ applies the EQ predicate on the "uuid" field.

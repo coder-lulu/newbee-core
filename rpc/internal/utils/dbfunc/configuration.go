@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/suyuan32/simple-admin-common/utils/dynamicconf"
+	"github.com/coder-lulu/newbee-common/utils/dynamicconf"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent"

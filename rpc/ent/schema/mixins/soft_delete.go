@@ -9,10 +9,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
-
-	gen "github.com/coder-lulu/newbee-core/rpc/ent"
-	"github.com/coder-lulu/newbee-core/rpc/ent/hook"
-	"github.com/coder-lulu/newbee-core/rpc/ent/intercept"
 )
 
 // SoftDeleteMixin implements the soft delete pattern for schemas.
@@ -36,47 +32,35 @@ func SkipSoftDelete(parent context.Context) context.Context {
 	return context.WithValue(parent, softDeleteKey{}, true)
 }
 
-// Interceptors of the SoftDeleteMixin.
-func (d SoftDeleteMixin) Interceptors() []gen.Interceptor {
-	return []gen.Interceptor{
-		intercept.TraverseFunc(func(ctx context.Context, q intercept.Query) error {
-			// Skip soft-delete, means include soft-deleted entities.
-			if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
-				return nil
-			}
-			d.P(q)
-			return nil
-		}),
-	}
-}
-
 // Hooks of the SoftDeleteMixin.
-func (d SoftDeleteMixin) Hooks() []gen.Hook {
-	return []gen.Hook{
-		hook.On(
-			func(next gen.Mutator) gen.Mutator {
-				return gen.MutateFunc(func(ctx context.Context, m gen.Mutation) (gen.Value, error) {
-					// Skip soft-delete, means delete the entity permanently.
-					if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
-						return next.Mutate(ctx, m)
-					}
-					mx, ok := m.(interface {
-						SetOp(gen.Op)
-						Client() *gen.Client
-						SetDeletedAt(time.Time)
-						WhereP(...func(*sql.Selector))
-					})
-					if !ok {
-						return nil, fmt.Errorf("unexpected mutation type %T", m)
-					}
-					d.P(mx)
-					mx.SetOp(gen.OpUpdate)
-					mx.SetDeletedAt(time.Now())
-					return mx.Client().Mutate(ctx, m)
+func (d SoftDeleteMixin) Hooks() []ent.Hook {
+	return []ent.Hook{
+		func(next ent.Mutator) ent.Mutator {
+			return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+				// Only apply to delete operations
+				if !m.Op().Is(ent.OpDeleteOne | ent.OpDelete) {
+					return next.Mutate(ctx, m)
+				}
+
+				// Skip soft-delete, means delete the entity permanently.
+				if skip, _ := ctx.Value(softDeleteKey{}).(bool); skip {
+					return next.Mutate(ctx, m)
+				}
+
+				mx, ok := m.(interface {
+					SetOp(ent.Op)
+					SetDeletedAt(time.Time)
+					WhereP(...func(*sql.Selector))
 				})
-			},
-			gen.OpDeleteOne|gen.OpDelete,
-		),
+				if !ok {
+					return nil, fmt.Errorf("unexpected mutation type %T", m)
+				}
+				d.P(mx)
+				mx.SetOp(ent.OpUpdate)
+				mx.SetDeletedAt(time.Now())
+				return next.Mutate(ctx, m)
+			})
+		},
 	}
 }
 

@@ -24,6 +24,8 @@ const (
 	FieldStatus = "status"
 	// FieldDeletedAt holds the string denoting the deleted_at field in the database.
 	FieldDeletedAt = "deleted_at"
+	// FieldTenantID holds the string denoting the tenant_id field in the database.
+	FieldTenantID = "tenant_id"
 	// FieldUsername holds the string denoting the username field in the database.
 	FieldUsername = "username"
 	// FieldPassword holds the string denoting the password field in the database.
@@ -76,6 +78,7 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldStatus,
 	FieldDeletedAt,
+	FieldTenantID,
 	FieldUsername,
 	FieldPassword,
 	FieldNickname,
@@ -112,8 +115,7 @@ func ValidColumn(column string) bool {
 //
 //	import _ "github.com/coder-lulu/newbee-core/rpc/ent/runtime"
 var (
-	Hooks        [1]ent.Hook
-	Interceptors [2]ent.Interceptor
+	Hooks [1]ent.Hook
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -122,6 +124,8 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus uint8
+	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
+	DefaultTenantID uint64
 	// DefaultHomePath holds the default value on creation for the "home_path" field.
 	DefaultHomePath string
 	// DefaultDepartmentID holds the default value on creation for the "department_id" field.
@@ -156,6 +160,11 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByDeletedAt orders the results by the deleted_at field.
 func ByDeletedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDeletedAt, opts...).ToFunc()
+}
+
+// ByTenantID orders the results by the tenant_id field.
+func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTenantID, opts...).ToFunc()
 }
 
 // ByUsername orders the results by the username field.

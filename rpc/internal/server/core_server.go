@@ -17,6 +17,7 @@ import (
 	"github.com/coder-lulu/newbee-core/rpc/internal/logic/oauthprovider"
 	"github.com/coder-lulu/newbee-core/rpc/internal/logic/position"
 	"github.com/coder-lulu/newbee-core/rpc/internal/logic/role"
+	"github.com/coder-lulu/newbee-core/rpc/internal/logic/tenant"
 	"github.com/coder-lulu/newbee-core/rpc/internal/logic/token"
 	"github.com/coder-lulu/newbee-core/rpc/internal/logic/user"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"
@@ -330,6 +331,37 @@ func (s *CoreServer) AddAuth(ctx context.Context, in *core.RoleAuthReq) (*core.B
 func (s *CoreServer) ChangeRoleStatus(ctx context.Context, in *core.RoleStatusChangeParam) (*core.BaseResp, error) {
 	l := role.NewChangeRoleStatusLogic(ctx, s.svcCtx)
 	return l.ChangeRoleStatus(in)
+}
+
+// Tenant management
+func (s *CoreServer) CreateTenant(ctx context.Context, in *core.TenantInfo) (*core.BaseIDResp, error) {
+	l := tenant.NewCreateTenantLogic(ctx, s.svcCtx)
+	return l.CreateTenant(in)
+}
+
+func (s *CoreServer) UpdateTenant(ctx context.Context, in *core.TenantInfo) (*core.BaseResp, error) {
+	l := tenant.NewUpdateTenantLogic(ctx, s.svcCtx)
+	return l.UpdateTenant(in)
+}
+
+func (s *CoreServer) GetTenantList(ctx context.Context, in *core.TenantListReq) (*core.TenantListResp, error) {
+	l := tenant.NewGetTenantListLogic(ctx, s.svcCtx)
+	return l.GetTenantList(in)
+}
+
+func (s *CoreServer) GetTenantById(ctx context.Context, in *core.IDReq) (*core.TenantInfo, error) {
+	l := tenant.NewGetTenantByIdLogic(ctx, s.svcCtx)
+	return l.GetTenantById(in)
+}
+
+func (s *CoreServer) DeleteTenant(ctx context.Context, in *core.IDsReq) (*core.BaseResp, error) {
+	l := tenant.NewDeleteTenantLogic(ctx, s.svcCtx)
+	return l.DeleteTenant(in)
+}
+
+func (s *CoreServer) InitTenantData(ctx context.Context, in *core.IDReq) (*core.BaseResp, error) {
+	l := tenant.NewInitTenantDataLogic(ctx, s.svcCtx)
+	return l.InitTenantData(in)
 }
 
 // Token management

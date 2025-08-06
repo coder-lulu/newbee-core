@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/duke-git/lancet/v2/random"
-	"github.com/suyuan32/simple-admin-common/config"
-	"github.com/suyuan32/simple-admin-common/i18n"
+	"github.com/coder-lulu/newbee-common/config"
+	"github.com/coder-lulu/newbee-common/i18n"
 	"github.com/suyuan32/simple-admin-message-center/types/mcms"
 	"github.com/zeromicro/go-zero/core/errorx"
 

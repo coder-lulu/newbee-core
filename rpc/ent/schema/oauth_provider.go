@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 
-	"github.com/suyuan32/simple-admin-common/orm/ent/mixins"
+	"github.com/coder-lulu/newbee-common/orm/ent/mixins"
 )
 
 type OauthProvider struct {
@@ -40,6 +40,8 @@ func (OauthProvider) Fields() []ent.Field {
 func (OauthProvider) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.IDMixin{},
+		mixins.StatusMixin{},
+		mixins.TenantMixin{},
 	}
 }
 

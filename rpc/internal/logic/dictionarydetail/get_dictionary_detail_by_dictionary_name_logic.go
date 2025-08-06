@@ -2,9 +2,9 @@ package dictionarydetail
 
 import (
 	"context"
-	"github.com/suyuan32/simple-admin-common/enum/common"
+	"github.com/coder-lulu/newbee-common/enum/common"
 
-	"github.com/suyuan32/simple-admin-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/utils/pointy"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/dictionary"

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	uuid "github.com/gofrs/uuid/v5"
-	"github.com/suyuan32/simple-admin-common/utils/uuidx"
+	"github.com/coder-lulu/newbee-common/utils/uuidx"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/role"
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/dberrorhandler"

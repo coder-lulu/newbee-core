@@ -24,7 +24,7 @@ Captcha:
 
 DatabaseConf:
   Type: mysql
-  Host: localhost
+  Host: 192.168.200.131
   Port: 3306
   DBName: newbee
   Username: root # set your username
@@ -74,7 +74,7 @@ CROSConf:
   Address: '*'    # if it is *, allow all ip and address. e.g. http://example.com
 
 RedisConf:
-  Host: 127.0.0.1:6380
+  Host: 192.168.200.131:6379
   Db: 0
 
 CoreRpc:

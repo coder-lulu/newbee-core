@@ -3,12 +3,12 @@ package publicuser
 import (
 	"context"
 
-	"github.com/suyuan32/simple-admin-common/config"
-	"github.com/suyuan32/simple-admin-common/enum/errorcode"
-	"github.com/suyuan32/simple-admin-common/i18n"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entctx/datapermctx"
-	"github.com/suyuan32/simple-admin-common/orm/ent/entenum"
-	"github.com/suyuan32/simple-admin-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/config"
+	"github.com/coder-lulu/newbee-common/enum/errorcode"
+	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/orm/ent/entenum"
+	"github.com/coder-lulu/newbee-common/utils/pointy"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/coder-lulu/newbee-core/rpc/types/core"

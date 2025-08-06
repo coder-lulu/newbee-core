@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/suyuan32/simple-admin-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/utils/pointy"
 	"github.com/coder-lulu/newbee-core/rpc/ent/predicate"
 	"github.com/coder-lulu/newbee-core/rpc/ent/role"
 	"github.com/coder-lulu/newbee-core/rpc/ent/user"

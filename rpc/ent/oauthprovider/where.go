@@ -64,6 +64,16 @@ func UpdatedAt(v time.Time) predicate.OauthProvider {
 	return predicate.OauthProvider(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldEQ(FieldStatus, v))
+}
+
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldEQ(FieldTenantID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.OauthProvider {
 	return predicate.OauthProvider(sql.FieldEQ(FieldName, v))
@@ -187,6 +197,96 @@ func UpdatedAtLT(v time.Time) predicate.OauthProvider {
 // UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
 func UpdatedAtLTE(v time.Time) predicate.OauthProvider {
 	return predicate.OauthProvider(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusGT applies the GT predicate on the "status" field.
+func StatusGT(v uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldGT(FieldStatus, v))
+}
+
+// StatusGTE applies the GTE predicate on the "status" field.
+func StatusGTE(v uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldGTE(FieldStatus, v))
+}
+
+// StatusLT applies the LT predicate on the "status" field.
+func StatusLT(v uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldLT(FieldStatus, v))
+}
+
+// StatusLTE applies the LTE predicate on the "status" field.
+func StatusLTE(v uint8) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldLTE(FieldStatus, v))
+}
+
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldIsNull(FieldStatus))
+}
+
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldNotNull(FieldStatus))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDGT applies the GT predicate on the "tenant_id" field.
+func TenantIDGT(v uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldGT(FieldTenantID, v))
+}
+
+// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
+func TenantIDGTE(v uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldGTE(FieldTenantID, v))
+}
+
+// TenantIDLT applies the LT predicate on the "tenant_id" field.
+func TenantIDLT(v uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldLT(FieldTenantID, v))
+}
+
+// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
+func TenantIDLTE(v uint64) predicate.OauthProvider {
+	return predicate.OauthProvider(sql.FieldLTE(FieldTenantID, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.

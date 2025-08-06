@@ -6,7 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"github.com/suyuan32/simple-admin-common/orm/ent/mixins"
+	"github.com/coder-lulu/newbee-common/orm/ent/mixins"
 )
 
 type Department struct {
@@ -37,6 +37,7 @@ func (Department) Mixin() []ent.Mixin {
 		mixins.IDMixin{},
 		mixins.StatusMixin{},
 		mixins.SortMixin{},
+		mixins.TenantMixin{},
 	}
 }
 

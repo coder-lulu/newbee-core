@@ -70,6 +70,11 @@ func Sort(v uint32) predicate.Menu {
 	return predicate.Menu(sql.FieldEQ(FieldSort, v))
 }
 
+// TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
+func TenantID(v uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldEQ(FieldTenantID, v))
+}
+
 // ParentID applies equality check predicate on the "parent_id" field. It's identical to ParentIDEQ.
 func ParentID(v uint64) predicate.Menu {
 	return predicate.Menu(sql.FieldEQ(FieldParentID, v))
@@ -303,6 +308,46 @@ func SortLT(v uint32) predicate.Menu {
 // SortLTE applies the LTE predicate on the "sort" field.
 func SortLTE(v uint32) predicate.Menu {
 	return predicate.Menu(sql.FieldLTE(FieldSort, v))
+}
+
+// TenantIDEQ applies the EQ predicate on the "tenant_id" field.
+func TenantIDEQ(v uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldEQ(FieldTenantID, v))
+}
+
+// TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
+func TenantIDNEQ(v uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldNEQ(FieldTenantID, v))
+}
+
+// TenantIDIn applies the In predicate on the "tenant_id" field.
+func TenantIDIn(vs ...uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldIn(FieldTenantID, vs...))
+}
+
+// TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
+func TenantIDNotIn(vs ...uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldNotIn(FieldTenantID, vs...))
+}
+
+// TenantIDGT applies the GT predicate on the "tenant_id" field.
+func TenantIDGT(v uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldGT(FieldTenantID, v))
+}
+
+// TenantIDGTE applies the GTE predicate on the "tenant_id" field.
+func TenantIDGTE(v uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldGTE(FieldTenantID, v))
+}
+
+// TenantIDLT applies the LT predicate on the "tenant_id" field.
+func TenantIDLT(v uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldLT(FieldTenantID, v))
+}
+
+// TenantIDLTE applies the LTE predicate on the "tenant_id" field.
+func TenantIDLTE(v uint64) predicate.Menu {
+	return predicate.Menu(sql.FieldLTE(FieldTenantID, v))
 }
 
 // ParentIDEQ applies the EQ predicate on the "parent_id" field.

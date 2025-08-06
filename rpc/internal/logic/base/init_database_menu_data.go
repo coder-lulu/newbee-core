@@ -1,7 +1,7 @@
 package base
 
 import (
-	"github.com/suyuan32/simple-admin-common/enum/common"
+	"github.com/coder-lulu/newbee-common/enum/common"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 

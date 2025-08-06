@@ -119,8 +119,8 @@ type RoleInfo struct {
 	// max length : 30
 	Name *string `json:"name,optional" validate:"omitempty,max=30"`
 	// Role code | 角色码
-	// max length : 20
-	Code *string `json:"code,optional" validate:"omitempty,max=20"`
+	// max length : 15
+	Code *string `json:"code,optional" validate:"omitempty,max=15,alphanum"`
 	// DefaultRouter | 默认首页
 	// max length : 80
 	DefaultRouter *string `json:"defaultRouter,optional" validate:"omitempty,max=80"`
@@ -241,6 +241,8 @@ type UserInfo struct {
 	DepartmentId *uint64 `json:"departmentId,optional,omitempty"`
 	// Position ID | 职位ID
 	PositionIds []uint64 `json:"postIds,optional,omitempty"`
+	// Tenant ID | 租户ID
+	TenantId uint64 `json:"tenantId"`
 }
 
 // The response data of user list | 用户列表数据
@@ -529,6 +531,7 @@ type ProfileUserInfo struct {
 // swagger:model ProfileResp
 type ProfileResp struct {
 	BaseDataInfo
+	// The profile information | 个人信息
 	Data ProfileUserInfo `json:"data"`
 }
 
@@ -973,10 +976,10 @@ type DictionaryListInfo struct {
 // swagger:model DictionaryListReq
 type DictionaryListReq struct {
 	PageInfo
-	// Name | 字典名称
+	// Title | 字典标题
 	// max length : 50
 	Title *string `json:"title,optional" validate:"omitempty,max=50"`
-	// Name | 字典类型
+	// Name | 字典名称
 	// max length : 50
 	Name *string `json:"name,optional" validate:"omitempty,max=50"`
 }
@@ -1174,8 +1177,8 @@ type DepartmentInfo struct {
 	// max length : 200
 	Ancestors *string `json:"ancestors,optional" validate:"omitempty,max=200"`
 	// Leader | 部门负责人
-	// max length : 64
-	Leader *string `json:"leader,optional" validate:"omitempty,max=64"`
+	// max length : 20
+	Leader *string `json:"leader,optional" validate:"omitempty,max=20"`
 	// Phone | 电话号码
 	// max length : 18
 	Phone *string `json:"phone,optional" validate:"omitempty,max=18"`
@@ -1189,10 +1192,18 @@ type DepartmentInfo struct {
 	ParentId *uint64 `json:"parentId,optional"`
 }
 
-// Department list data | 部门列表数据
+// The response data of department list | 部门列表数据
 // swagger:model DepartmentListResp
 type DepartmentListResp struct {
 	BaseDataInfo
+	// Department list data | 部门列表数据
+	Data DepartmentListInfo `json:"data"`
+}
+
+// Department list data | 部门列表数据
+// swagger:model DepartmentListInfo
+type DepartmentListInfo struct {
+	BaseListInfo
 	// The API list data | 部门列表数据
 	Data []DepartmentInfo `json:"data"`
 }
@@ -1200,12 +1211,16 @@ type DepartmentListResp struct {
 // Get department list request params | 部门列表请求参数
 // swagger:model DepartmentListReq
 type DepartmentListReq struct {
+	PageInfo
 	// Name | 部门名称
 	// max length : 50
 	Name *string `json:"name,optional" validate:"omitempty,max=50"`
 	// Leader | 部门负责人
 	// max length : 20
 	Leader *string `json:"leader,optional" validate:"omitempty,max=20"`
+	// Status | 状态
+	// max : 20
+	Status *uint32 `json:"status,optional" validate:"omitempty,lt=20"`
 }
 
 // Department information response | 部门信息返回体
@@ -1333,11 +1348,11 @@ type DictionaryDetailListInfo struct {
 // swagger:model DictionaryDetailListReq
 type DictionaryDetailListReq struct {
 	PageInfo
-	// Key | 键
+	// Title | 标题
 	// max length : 80
 	Title *string `json:"name,optional" validate:"omitempty,max=80"`
 	// Dictionary ID | 所属字典ID
-	DictionaryId *uint64 `json:"dictionaryId,optional"  validate:"omitempty"`
+	DictionaryId *uint64 `json:"dictionaryId,optional"`
 }
 
 // DictionaryDetail information response | 字典键值信息返回体
@@ -1755,4 +1770,104 @@ type ConfigurationInfoResp struct {
 	BaseDataInfo
 	// Configuration information | 参数配置数据
 	Data ConfigurationInfo `json:"data"`
+}
+
+// The response data of tenant information | 租户信息
+// swagger:model TenantInfo
+type TenantInfo struct {
+	BaseIDInfo
+	// Status | 状态 1: normal 2: ban
+	Status *uint32 `json:"status,optional" validate:"omitempty,range=[1:2]"`
+	// Tenant name | 租户名称
+	// max length : 50
+	Name *string `json:"name,optional" validate:"omitempty,max=50"`
+	// Tenant code | 租户代码
+	// max length : 30
+	Code *string `json:"code,optional" validate:"omitempty,max=30"`
+	// Tenant domain | 租户域名
+	// max length : 100
+	Domain *string `json:"domain,optional" validate:"omitempty,max=100"`
+	// Contact person | 联系人
+	// max length : 50
+	ContactPerson *string `json:"contactPerson,optional" validate:"omitempty,max=50"`
+	// Contact phone | 联系电话
+	// max length : 18
+	ContactPhone *string `json:"contactPhone,optional" validate:"omitempty,max=18"`
+	// Contact email | 联系邮箱
+	// max length : 80
+	ContactEmail *string `json:"contactEmail,optional" validate:"omitempty,email,max=80"`
+	// Tenant description | 租户描述
+	// max length : 200
+	Description *string `json:"description,optional" validate:"omitempty,max=200"`
+	// Expire time | 过期时间
+	ExpireTime *int64 `json:"expireTime,optional"`
+	// Maximum users | 最大用户数
+	MaxUsers *uint32 `json:"maxUsers,optional" validate:"omitempty,gt=0"`
+	// Tenant settings | 租户配置
+	Settings []TenantSettings `json:"settings,optional"`
+}
+
+// Tenant settings | 租户配置
+type TenantSettings struct {
+	// Key | 配置键
+	// max length : 50
+	Key *string `json:"key,optional" validate:"omitempty,max=50"`
+	// Value | 配置值
+	// max length : 200
+	Value *string `json:"value,optional" validate:"omitempty,max=200"`
+}
+
+// The response data of tenant list | 租户列表数据
+// swagger:model TenantListResp
+type TenantListResp struct {
+	BaseDataInfo
+	// Tenant list data | 租户列表数据
+	Data TenantListInfo `json:"data"`
+}
+
+// Tenant list data | 租户列表数据
+// swagger:model TenantListInfo
+type TenantListInfo struct {
+	BaseListInfo
+	// The tenant list data | 租户列表数据
+	Data []TenantInfo `json:"data"`
+}
+
+// Get tenant list request params | 租户列表请求参数
+// swagger:model TenantListReq
+type TenantListReq struct {
+	PageInfo
+	// Tenant Name | 租户名称
+	// max length : 50
+	Name *string `json:"name,optional" validate:"omitempty,max=50"`
+	// Tenant Code | 租户代码
+	// max length : 30
+	Code *string `json:"code,optional" validate:"omitempty,max=30"`
+	// Tenant Domain | 租户域名
+	// max length : 100
+	Domain *string `json:"domain,optional" validate:"omitempty,max=100"`
+	// Contact person | 联系人
+	// max length : 50
+	ContactPerson *string `json:"contactPerson,optional" validate:"omitempty,max=50"`
+	// Contact phone | 联系电话
+	// max length : 18
+	ContactPhone *string `json:"contactPhone,optional" validate:"omitempty,max=18"`
+	// Contact email | 联系邮箱
+	// max length : 80
+	ContactEmail *string `json:"contactEmail,optional" validate:"omitempty,email,max=80"`
+	// Description | 描述
+	// max length : 200
+	Description *string `json:"description,optional" validate:"omitempty,max=200"`
+	// Expire time | 过期时间
+	ExpireTime *int64 `json:"expireTime,optional"`
+	// Maximum users | 最大用户数
+	MaxUsers *uint32 `json:"maxUsers,optional"`
+}
+
+// Tenant information response | 租户信息返回体
+// swagger:model TenantInfoResp
+type TenantInfoResp struct {
+	BaseDataInfo
+	// Tenant information | 租户数据
+	Data TenantInfo `json:"data"`
 }

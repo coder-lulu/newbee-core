@@ -4,7 +4,7 @@ Timeout: 30000
 
 DatabaseConf:
   Type: mysql
-  Host: localhost
+  Host: 192.168.200.131
   Port: 3306
   DBName: newbee
   Username: root # set your username
@@ -14,7 +14,7 @@ DatabaseConf:
   CacheTime: 5
 
 RedisConf:
-  Host: localhost:6380
+  Host: 192.168.200.131:6379
   Type: node
 
 Log:

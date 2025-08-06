@@ -43,6 +43,9 @@ type (
 
         // Position ID | 职位ID
         PositionIds []uint64 `json:"postIds,optional,omitempty"`
+
+        // Tenant ID | 租户ID
+        TenantId uint64 `json:"tenantId"`
     }
 
     // The response data of user list | 用户列表数据
@@ -294,7 +297,7 @@ type (
         BaseDataInfo
 
         // The profile information | 个人信息
-        Data ProfileInfo `json:"data"`
+        Data ProfileUserInfo `json:"data"`
     }
 
     // Reset password by email request | 通过邮箱重置密码请求

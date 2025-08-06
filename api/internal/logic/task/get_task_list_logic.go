@@ -10,7 +10,7 @@ import (
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
 	"github.com/coder-lulu/newbee-core/api/internal/types"
 
-	"github.com/suyuan32/simple-admin-common/i18n"
+	"github.com/coder-lulu/newbee-common/i18n"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

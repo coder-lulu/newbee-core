@@ -3,8 +3,8 @@ package token
 import (
 	"context"
 
-	"github.com/suyuan32/simple-admin-common/utils/pointy"
-	"github.com/suyuan32/simple-admin-common/utils/uuidx"
+	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/utils/uuidx"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/predicate"

@@ -5,7 +5,7 @@ import (
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
 	"github.com/coder-lulu/newbee-core/api/internal/types"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
-	"github.com/suyuan32/simple-admin-common/enum/common"
+	"github.com/coder-lulu/newbee-common/enum/common"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
