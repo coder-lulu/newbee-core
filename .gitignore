@@ -44,3 +44,4 @@ rpc/rpc
 *_test
 *.exe
 *.bin
+api/api
