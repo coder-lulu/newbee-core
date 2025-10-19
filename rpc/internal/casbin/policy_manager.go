@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/casbin/casbin/v2"
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/tenantctx"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/tenantctx"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/casbinrule"
 	"github.com/redis/go-redis/v9"

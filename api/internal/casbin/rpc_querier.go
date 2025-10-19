@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strconv"
 
-	commontypes "github.com/coder-lulu/newbee-common/casbin/types"
-	"github.com/coder-lulu/newbee-common/middleware/dataperm"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	commontypes "github.com/coder-lulu/newbee-common/v2/casbin/types"
+	"github.com/coder-lulu/newbee-common/v2/middleware/dataperm"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 	coreclient "github.com/coder-lulu/newbee-core/rpc/coreclient"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
 )

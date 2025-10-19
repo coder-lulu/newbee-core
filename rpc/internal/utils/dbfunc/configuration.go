@@ -3,7 +3,7 @@ package dbfunc
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/utils/dynamicconf"
+	"github.com/coder-lulu/newbee-common/v2/utils/dynamicconf"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 

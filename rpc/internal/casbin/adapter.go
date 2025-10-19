@@ -3,7 +3,7 @@ package casbin
 import (
 	"context"
 
-	commonadapter "github.com/coder-lulu/newbee-common/casbin/adapter"
+	commonadapter "github.com/coder-lulu/newbee-common/v2/casbin/adapter"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 )
 

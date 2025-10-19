@@ -3,9 +3,9 @@ package menu
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/i18n"
-	"github.com/coder-lulu/newbee-common/middleware/keys"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
+	"github.com/coder-lulu/newbee-common/v2/middleware/keys"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
 	"github.com/coder-lulu/newbee-core/api/internal/types"

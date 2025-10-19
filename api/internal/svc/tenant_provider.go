@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/middleware/framework"
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/middleware/framework"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 	"github.com/coder-lulu/newbee-core/rpc/coreclient"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
 )

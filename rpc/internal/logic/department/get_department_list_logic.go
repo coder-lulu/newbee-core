@@ -3,7 +3,7 @@ package department
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 	"github.com/zeromicro/go-zero/core/logx"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent/department"

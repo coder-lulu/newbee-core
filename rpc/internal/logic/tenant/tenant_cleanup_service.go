@@ -14,7 +14,7 @@ import (
 	"github.com/coder-lulu/newbee-core/rpc/ent/position"
 	"github.com/coder-lulu/newbee-core/rpc/ent/role"
 	"github.com/coder-lulu/newbee-core/rpc/ent/user"
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 )
 
 // TenantCleanupService 租户清理服务

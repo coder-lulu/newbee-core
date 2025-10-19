@@ -4,9 +4,9 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/coder-lulu/newbee-common/i18n"
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/deptctx"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/deptctx"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/errorx"
 

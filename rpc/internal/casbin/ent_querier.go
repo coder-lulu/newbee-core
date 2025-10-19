@@ -3,7 +3,7 @@ package casbin
 import (
 	"context"
 
-	commontypes "github.com/coder-lulu/newbee-common/casbin/types"
+	commontypes "github.com/coder-lulu/newbee-common/v2/casbin/types"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/casbinrule"
 )

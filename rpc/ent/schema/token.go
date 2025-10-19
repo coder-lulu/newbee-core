@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/schema/index"
 	"github.com/gofrs/uuid/v5"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/mixins"
-	commonMixins "github.com/coder-lulu/newbee-common/orm/ent/mixins"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/mixins"
+	commonMixins "github.com/coder-lulu/newbee-common/v2/orm/ent/mixins"
 )
 
 type Token struct {

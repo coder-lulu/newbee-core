@@ -3,7 +3,7 @@ package role
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/utils/uuidx"
+	"github.com/coder-lulu/newbee-common/v2/utils/uuidx"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/role"
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/dberrorhandler"

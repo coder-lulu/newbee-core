@@ -4,7 +4,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 	"github.com/coder-lulu/newbee-core/rpc/internal/config"
 	"github.com/coder-lulu/newbee-core/rpc/internal/server"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"

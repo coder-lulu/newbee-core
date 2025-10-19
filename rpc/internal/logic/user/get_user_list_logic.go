@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/datapermctx"
 
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent/department"
 	"github.com/coder-lulu/newbee-core/rpc/ent/position"

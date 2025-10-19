@@ -17,10 +17,10 @@ import (
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/redisfunc"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
 
-	"github.com/coder-lulu/newbee-common/i18n"
-	"github.com/coder-lulu/newbee-common/middleware/keys"
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
-	"github.com/coder-lulu/newbee-common/utils/encrypt"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
+	"github.com/coder-lulu/newbee-common/v2/middleware/keys"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/utils/encrypt"
 
 	"github.com/gofrs/uuid/v5"
 	"github.com/zeromicro/go-zero/core/errorx"

@@ -3,11 +3,11 @@ package publicuser
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/config"
-	"github.com/coder-lulu/newbee-common/enum/errorcode"
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
-	"github.com/coder-lulu/newbee-common/orm/ent/entenum"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/config"
+	"github.com/coder-lulu/newbee-common/v2/enum/errorcode"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entenum"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/coder-lulu/newbee-core/api/internal/svc"

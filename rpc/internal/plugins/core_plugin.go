@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
-	"github.com/coder-lulu/newbee-common/tenant"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/tenant"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	tenant_ent "github.com/coder-lulu/newbee-core/rpc/ent/tenant"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"

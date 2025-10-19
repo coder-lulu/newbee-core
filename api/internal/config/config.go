@@ -1,11 +1,11 @@
 package config
 
 import (
-	"github.com/coder-lulu/newbee-common/config"
-	"github.com/coder-lulu/newbee-common/i18n"
-	"github.com/coder-lulu/newbee-common/middleware/framework"
-	"github.com/coder-lulu/newbee-common/plugins/casbin"
-	"github.com/coder-lulu/newbee-common/utils/captcha"
+	"github.com/coder-lulu/newbee-common/v2/config"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
+	"github.com/coder-lulu/newbee-common/v2/middleware/framework"
+	"github.com/coder-lulu/newbee-common/v2/plugins/casbin"
+	"github.com/coder-lulu/newbee-common/v2/utils/captcha"
 	"github.com/zeromicro/go-zero/rest"
 	"github.com/zeromicro/go-zero/zrpc"
 )

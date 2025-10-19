@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/middleware/keys"
-	"github.com/coder-lulu/newbee-common/utils/jwt"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/middleware/keys"
+	"github.com/coder-lulu/newbee-common/v2/utils/jwt"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
 	"github.com/coder-lulu/newbee-core/api/internal/types"

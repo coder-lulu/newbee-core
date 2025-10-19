@@ -7,8 +7,8 @@ import (
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/redisfunc"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
 
-	"github.com/coder-lulu/newbee-common/config"
-	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/v2/config"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

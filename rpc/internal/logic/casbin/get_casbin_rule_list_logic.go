@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/tenantctx"
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/tenantctx"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/casbinrule"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"

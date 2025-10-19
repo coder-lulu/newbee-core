@@ -9,7 +9,7 @@ import (
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/dberrorhandler"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

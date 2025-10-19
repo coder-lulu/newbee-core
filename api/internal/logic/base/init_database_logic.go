@@ -5,12 +5,12 @@ import (
 	"errors"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/enum/errorcode"
+	"github.com/coder-lulu/newbee-common/v2/enum/errorcode"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
 
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
 	"github.com/coder-lulu/newbee-core/api/internal/types"

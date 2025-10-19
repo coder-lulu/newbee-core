@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	dept "github.com/coder-lulu/newbee-core/rpc/ent/department"
 
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent/position"
 	"github.com/coder-lulu/newbee-core/rpc/ent/predicate"

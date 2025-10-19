@@ -3,8 +3,8 @@ package base
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/enum/common"
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/enum/common"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 

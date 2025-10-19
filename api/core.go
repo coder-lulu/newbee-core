@@ -26,7 +26,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/coder-lulu/newbee-common/middleware/integration"
+	"github.com/coder-lulu/newbee-common/v2/middleware/integration"
 	"github.com/coder-lulu/newbee-core/api/internal/config"
 	"github.com/coder-lulu/newbee-core/api/internal/handler"
 	"github.com/coder-lulu/newbee-core/api/internal/svc"

@@ -6,8 +6,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/coder-lulu/newbee-common/middleware/audit"
-	"github.com/coder-lulu/newbee-common/middleware/framework"
+	"github.com/coder-lulu/newbee-common/v2/middleware/audit"
+	"github.com/coder-lulu/newbee-common/v2/middleware/framework"
 	"github.com/coder-lulu/newbee-core/rpc/coreclient"
 	"github.com/zeromicro/go-zero/core/logx"
 )

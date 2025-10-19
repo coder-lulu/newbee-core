@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/middleware/keys"
-	hookshelper "github.com/coder-lulu/newbee-common/orm/ent/hooks"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
-	"github.com/coder-lulu/newbee-common/utils/uuidx"
+	"github.com/coder-lulu/newbee-common/v2/middleware/keys"
+	hookshelper "github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/uuidx"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/user"

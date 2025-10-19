@@ -1,10 +1,10 @@
 package config
 
 import (
-	"github.com/coder-lulu/newbee-common/plugins/casbin"
+	"github.com/coder-lulu/newbee-common/v2/plugins/casbin"
 	"github.com/zeromicro/go-zero/zrpc"
 
-	"github.com/coder-lulu/newbee-common/config"
+	"github.com/coder-lulu/newbee-common/v2/config"
 )
 
 type Config struct {

@@ -3,11 +3,11 @@ package user
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/enum/common"
+	"github.com/coder-lulu/newbee-common/v2/enum/common"
 
-	"github.com/coder-lulu/newbee-common/utils/encrypt"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
-	"github.com/coder-lulu/newbee-common/utils/uuidx"
+	"github.com/coder-lulu/newbee-common/v2/utils/encrypt"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/uuidx"
 
 	"github.com/coder-lulu/newbee-core/rpc/internal/logic/token"
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/entx"
@@ -20,7 +20,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
 )
 
 type UpdateUserLogic struct {

@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/middleware/keys"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
-	"github.com/coder-lulu/newbee-common/utils/uuidx"
+	"github.com/coder-lulu/newbee-common/v2/middleware/keys"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/uuidx"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/auditlog"
 	"github.com/coder-lulu/newbee-core/rpc/ent/predicate"

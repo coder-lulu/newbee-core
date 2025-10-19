@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/bsm/redislock"
-	"github.com/coder-lulu/newbee-common/config"
+	"github.com/coder-lulu/newbee-common/v2/config"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent/casbinrule"
 	"github.com/coder-lulu/newbee-core/rpc/ent/role"
@@ -16,17 +16,17 @@ import (
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/redisfunc"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/coder-lulu/newbee-common/enum/common"
-	"github.com/coder-lulu/newbee-common/i18n"
-	"github.com/coder-lulu/newbee-common/msg/logmsg"
-	"github.com/coder-lulu/newbee-common/utils/encrypt"
+	"github.com/coder-lulu/newbee-common/v2/enum/common"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
+	"github.com/coder-lulu/newbee-common/v2/msg/logmsg"
+	"github.com/coder-lulu/newbee-common/v2/utils/encrypt"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"
 	"github.com/coder-lulu/newbee-core/rpc/types/core"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 

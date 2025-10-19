@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/tenantctx"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/tenantctx"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"

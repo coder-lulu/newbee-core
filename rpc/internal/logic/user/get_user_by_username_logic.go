@@ -4,9 +4,9 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/coder-lulu/newbee-common/middleware/keys"
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/datapermctx"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/middleware/keys"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/datapermctx"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 	"github.com/coder-lulu/newbee-core/rpc/ent/user"
 	"github.com/coder-lulu/newbee-core/rpc/internal/svc"
 	"github.com/coder-lulu/newbee-core/rpc/internal/utils/dberrorhandler"

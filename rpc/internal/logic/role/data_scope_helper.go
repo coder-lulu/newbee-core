@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/hooks"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/hooks"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/coder-lulu/newbee-core/rpc/ent/casbinrule"
 	"github.com/zeromicro/go-zero/core/logx"

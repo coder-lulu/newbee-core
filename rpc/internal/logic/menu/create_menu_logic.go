@@ -5,8 +5,8 @@ import (
 
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 
-	"github.com/coder-lulu/newbee-common/enum/common"
-	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/v2/enum/common"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
 
 	"github.com/coder-lulu/newbee-core/rpc/ent/menu"
 

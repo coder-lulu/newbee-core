@@ -3,7 +3,7 @@ package oauthprovider
 import (
 	"context"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/tenantctx"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/tenantctx"
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
 	"github.com/coder-lulu/newbee-core/api/internal/types"
 	"github.com/coder-lulu/newbee-core/rpc/coreclient"

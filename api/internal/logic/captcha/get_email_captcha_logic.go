@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/config"
-	"github.com/coder-lulu/newbee-common/i18n"
+	"github.com/coder-lulu/newbee-common/v2/config"
+	"github.com/coder-lulu/newbee-common/v2/i18n"
 	"github.com/duke-git/lancet/v2/random"
 	"github.com/suyuan32/simple-admin-message-center/types/mcms"
 	"github.com/zeromicro/go-zero/core/errorx"

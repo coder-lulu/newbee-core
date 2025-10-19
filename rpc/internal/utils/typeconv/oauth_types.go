@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 )
 
 // ConvertAuthStyle converts protobuf uint64 AuthStyle to ent int AuthStyle

@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/coder-lulu/newbee-common/utils/encrypt"
-	"github.com/coder-lulu/newbee-common/utils/pointy"
+	"github.com/coder-lulu/newbee-common/v2/utils/encrypt"
+	"github.com/coder-lulu/newbee-common/v2/utils/pointy"
 	"github.com/zeromicro/go-zero/core/errorx"
 
 	"github.com/coder-lulu/newbee-core/api/internal/svc"

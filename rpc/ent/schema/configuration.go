@@ -6,8 +6,8 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
-	"github.com/coder-lulu/newbee-common/orm/ent/mixins"
-	commonMixins "github.com/coder-lulu/newbee-common/orm/ent/mixins"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/mixins"
+	commonMixins "github.com/coder-lulu/newbee-common/v2/orm/ent/mixins"
 )
 
 // Configuration holds the schema definition for the Configuration entity.

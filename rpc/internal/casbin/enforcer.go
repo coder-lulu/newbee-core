@@ -12,8 +12,8 @@ import (
 	"github.com/casbin/casbin/v2/model"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/coder-lulu/newbee-common/middleware/keys"
-	"github.com/coder-lulu/newbee-common/orm/ent/entctx/tenantctx"
+	"github.com/coder-lulu/newbee-common/v2/middleware/keys"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/entctx/tenantctx"
 	"github.com/coder-lulu/newbee-core/rpc/ent"
 	"github.com/zeromicro/go-zero/core/logx"
 )

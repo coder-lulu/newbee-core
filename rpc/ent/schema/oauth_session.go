@@ -9,7 +9,7 @@ import (
 	"entgo.io/ent/schema/index"
 	uuid "github.com/gofrs/uuid/v5"
 
-	"github.com/coder-lulu/newbee-common/orm/ent/mixins"
+	"github.com/coder-lulu/newbee-common/v2/orm/ent/mixins"
 )
 
 type OauthSession struct {
