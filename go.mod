@@ -6,7 +6,7 @@ require (
 	entgo.io/ent v0.14.5
 	github.com/bsm/redislock v0.9.4
 	github.com/casbin/casbin/v2 v2.123.0
-	github.com/coder-lulu/newbee-common v1.6.13
+	github.com/coder-lulu/newbee-common/v2 v2.0.1
 	github.com/duke-git/lancet/v2 v2.3.7
 	github.com/gofrs/uuid/v5 v5.3.2
 	github.com/larksuite/oapi-sdk-go/v3 v3.4.22
@@ -176,4 +176,4 @@ replace github.com/zeromicro/go-zero v1.9.1 => github.com/suyuan32/simple-admin-
 
 replace github.com/mojocn/base64Captcha v1.3.8 => github.com/suyuan32/base64Captcha v1.3.8
 
-replace github.com/coder-lulu/newbee-common => ../common
+replace github.com/coder-lulu/newbee-common/v2 => ../common
