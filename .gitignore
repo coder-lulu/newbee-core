@@ -45,3 +45,5 @@ rpc/rpc
 *.exe
 *.bin
 api/api
+rpc/io-rpc
+rpc/rpc
