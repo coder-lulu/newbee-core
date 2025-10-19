@@ -1,0 +1,212 @@
+import "../base.api"
+
+type (
+    // The response data of tenant information | 租户信息
+    TenantInfo {
+        BaseIDInfo
+
+        // Status | 状态
+        Status *uint32 `json:"status,optional" validate:"omitempty,lt=20"`
+
+        // Tenant Name | 租户名称
+        Name *string `json:"name,optional" validate:"omitempty,max=100"`
+
+        // Tenant Code | 租户标识码
+        Code *string `json:"code,optional" validate:"omitempty,max=50"`
+
+        // Description | 描述
+        Description *string `json:"description,optional" validate:"omitempty,max=255"`
+
+        // Expired Time | 过期时间
+        ExpiredAt *int64 `json:"expiredAt,optional"`
+
+        // Configuration | 配置信息 (JSON格式)
+        Config *string `json:"config,optional"`
+
+        // Created By | 创建者ID
+        CreatedBy *uint64 `json:"createdBy,optional"`
+    }
+
+    // The response data of tenant list | 租户列表数据
+    TenantListResp {
+        BaseDataInfo
+
+        // Tenant list data | 租户列表数据
+        Data TenantListInfo `json:"data"`
+    }
+
+    // Tenant list data | 租户列表数据
+    TenantListInfo {
+        BaseListInfo
+
+        // The tenant list data | 租户列表数据
+        Data  []TenantInfo  `json:"data"`
+    }
+
+    // Get tenant list request params | 租户列表请求参数
+    TenantListReq {
+        PageInfo
+
+        // Tenant Name | 租户名称
+        Name *string `json:"name,optional" validate:"omitempty,max=100"`
+
+        // Tenant Code | 租户标识码
+        Code *string `json:"code,optional" validate:"omitempty,max=50"`
+
+        // Status | 状态
+        Status *uint32 `json:"status,optional"`
+
+        // Created By | 创建者ID
+        CreatedBy *uint64 `json:"createdBy,optional"`
+    }
+
+    // Tenant information response | 租户信息返回体
+    TenantInfoResp {
+        BaseDataInfo
+
+        // Tenant information | 租户数据
+        Data TenantInfo `json:"data"`
+    }
+
+    // Get tenant by code request | 根据租户码获取租户请求
+    TenantCodeReq {
+        // Tenant Code | 租户标识码
+        Code string `json:"code" validate:"required,max=50"`
+    }
+
+    // Update tenant status request | 更新租户状态请求
+    TenantStatusReq {
+        // Tenant ID | 租户ID
+        Id uint64 `json:"id" validate:"required"`
+
+        // Status | 状态
+        Status uint32 `json:"status" validate:"required,lt=20"`
+    }
+
+    // Initialize tenant request | 初始化租户请求
+    TenantInitReq {
+        // Tenant ID | 租户ID
+        TenantId uint64 `json:"tenantId" validate:"required"`
+
+        // Admin Username | 管理员用户名
+        AdminUsername *string `json:"adminUsername,optional" validate:"omitempty,max=50"`
+
+        // Admin Password | 管理员密码
+        AdminPassword *string `json:"adminPassword,optional" validate:"omitempty,min=6,max=30"`
+
+        // Admin Email | 管理员邮箱
+        AdminEmail *string `json:"adminEmail,optional" validate:"omitempty,email,max=100"`
+    }
+
+    // Public tenant information | 公开租户信息
+    PublicTenantInfo {
+        // Tenant ID | 租户ID
+        TenantId string `json:"tenantId"`
+
+        // Company Name | 公司名称/租户名称
+        CompanyName string `json:"companyName"`
+
+        // Domain | 绑定域名(可选)
+        Domain *string `json:"domain,optional"`
+    }
+
+    // Public tenant list response | 公开租户列表响应
+    PublicTenantListResp {
+        BaseDataInfo
+
+        // Tenant enabled | 是否启用租户
+        TenantEnabled bool `json:"tenantEnabled"`
+
+        // Tenant list data | 租户列表数据
+        VoList []PublicTenantInfo `json:"voList"`
+    }
+
+    // Dynamic tenant switch request | 动态租户切换请求
+    TenantSwitchReq {
+        // Target Tenant ID | 目标租户ID
+        TenantId string `json:"tenantId" validate:"required"`
+    }
+
+    // Current active tenant response | 当前激活租户响应
+    CurrentTenantResp {
+        BaseDataInfo
+
+        // Original Tenant ID | 原始租户ID
+        OriginalTenantId string `json:"originalTenantId"`
+
+        // Active Tenant ID | 当前激活租户ID
+        ActiveTenantId string `json:"activeTenantId"`
+
+        // Active Tenant Info | 激活租户信息
+        ActiveTenantInfo *TenantInfo `json:"activeTenantInfo,optional"`
+
+        // Is Switched | 是否已切换
+        IsSwitched bool `json:"isSwitched"`
+    }
+)
+
+@server(
+    group: tenant
+)
+
+service Core {
+    // Create tenant | 创建租户
+    @handler createTenant
+    post /tenant/create (TenantInfo) returns (BaseMsgResp)
+
+    // Update tenant | 更新租户
+    @handler updateTenant
+    post /tenant/update (TenantInfo) returns (BaseMsgResp)
+
+    // Delete tenant | 删除租户
+    @handler deleteTenant
+    post /tenant/delete (IDsReq) returns (BaseMsgResp)
+
+    // Get tenant list | 获取租户列表
+    @handler getTenantList
+    post /tenant/list (TenantListReq) returns (TenantListResp)
+
+    // Get Tenant by ID | 通过ID获取租户
+    @handler getTenantById
+    post /tenant (IDReq) returns (TenantInfoResp)
+
+    // Get Tenant by Code | 通过租户码获取租户
+    @handler getTenantByCode
+    post /tenant/code (TenantCodeReq) returns (TenantInfoResp)
+
+    // Update tenant status | 更新租户状态
+    @handler updateTenantStatus
+    post /tenant/status (TenantStatusReq) returns (BaseMsgResp)
+
+    // Initialize tenant | 初始化租户
+    @handler initTenant
+    post /tenant/init (TenantInitReq) returns (BaseMsgResp)
+}
+
+@server(
+    group: tenant
+)
+
+service Core {
+    // Switch tenant for super admin | 超级管理员切换租户
+    @handler switchTenant
+    post /tenant/switch (TenantSwitchReq) returns (BaseMsgResp)
+    
+    // Clear tenant switch | 清除租户切换
+    @handler clearTenantSwitch  
+    get /tenant/dynamic/clear returns (BaseMsgResp)
+    
+    // Get current active tenant | 获取当前激活租户
+    @handler getCurrentTenant
+    get /tenant/current returns (CurrentTenantResp)
+}
+
+@server(
+    group: auth
+)
+
+service Core {
+    // Get public tenant list | 获取公开租户列表（无需认证）
+    @handler getPublicTenantList
+    get /auth/tenant/list returns (PublicTenantListResp)
+}

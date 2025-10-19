@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+// Role message
+
+message RoleInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string name = 5;
+  optional string code = 6;
+  optional string default_router = 7;
+  optional string remark = 8;
+  optional uint32 sort = 9;
+  optional uint32 data_scope = 10;
+  repeated uint64 custom_dept_ids = 11;
+  repeated uint64 menu_ids = 12;
+  optional uint64 tenant_id = 13;
+}
+
+message RoleStatusChangeParam {
+  uint64 id = 1;
+  uint32 status = 4;
+}
+
+message RoleListResp {
+  uint64 total = 1;
+  repeated RoleInfo data = 2;
+}
+
+message RoleDataScopeReq {
+  uint64 id = 1;
+  uint32 data_scope = 10;
+  repeated uint64 custom_dept_ids = 11;
+
+}
+
+message RoleListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+  optional string code = 4;
+  optional string default_router = 5;
+}
+
+message RoleAuthReq {
+  uint64 roleId = 1;
+  repeated string userIds  = 2;
+}
+
+
+service Core {
+
+  // Role management
+  // group: role
+  rpc createRole (RoleInfo) returns (BaseIDResp);
+  // group: role
+  rpc updateRole (RoleInfo) returns (BaseResp);
+  // group: role
+  rpc getRoleList (RoleListReq) returns (RoleListResp);
+  // group: role
+  rpc getRoleById (IDReq) returns (RoleInfo);
+  // group: role
+  rpc deleteRole (IDsReq) returns (BaseResp);
+  // group: role
+  rpc initRoleDataPermToRedis(Empty) returns (BaseResp);
+  // group: role
+  rpc assignRoleDataScope(RoleDataScopeReq) returns (BaseResp);
+  // group: role
+  rpc cancelAuth(RoleAuthReq) returns (BaseResp);
+  // group: role
+  rpc addAuth(RoleAuthReq) returns (BaseResp);
+  // group: role
+  rpc changeRoleStatus (RoleStatusChangeParam) returns (BaseResp);
+}

@@ -1,0 +1,188 @@
+import "../base.api"
+
+type (
+    // The response data of audit log information | 审计日志信息
+    AuditLogInfo {
+        BaseUUIDInfo
+
+        // Status | 状态
+        Status *uint32 `json:"status,optional" validate:"omitempty,lt=20"`
+
+        // Tenant ID | 租户ID
+        TenantId *string `json:"tenantId,optional" validate:"omitempty,max=36"`
+
+        // User ID | 用户ID
+        UserId *string `json:"userId,optional" validate:"omitempty,max=36"`
+
+        // User name | 用户名
+        UserName *string `json:"userName,optional" validate:"omitempty,max=50"`
+
+        // Operation type | 操作类型
+        OperationType *string `json:"operationType,optional" validate:"omitempty,oneof=CREATE READ UPDATE DELETE"`
+
+        // Resource type | 资源类型
+        ResourceType *string `json:"resourceType,optional" validate:"omitempty,max=50"`
+
+        // Resource ID | 资源ID
+        ResourceId *string `json:"resourceId,optional" validate:"omitempty,max=50"`
+
+        // Request method | 请求方法
+        RequestMethod *string `json:"requestMethod,optional" validate:"omitempty,max=10"`
+
+        // Request path | 请求路径
+        RequestPath *string `json:"requestPath,optional" validate:"omitempty,max=255"`
+
+        // Request data | 请求数据
+        RequestData *string `json:"requestData,optional"`
+
+        // Response status | 响应状态
+        ResponseStatus *int32 `json:"responseStatus,optional"`
+
+        // Response data | 响应数据
+        ResponseData *string `json:"responseData,optional"`
+
+        // IP address | IP地址
+        IpAddress *string `json:"ipAddress,optional" validate:"omitempty,max=45"`
+
+        // User agent | 用户代理
+        UserAgent *string `json:"userAgent,optional" validate:"omitempty,max=512"`
+
+        // Duration in milliseconds | 耗时(毫秒)
+        DurationMs *int64 `json:"durationMs,optional"`
+
+        // Error message | 错误信息
+        ErrorMessage *string `json:"errorMessage,optional"`
+
+        // Metadata | 元数据
+        Metadata map[string]interface{} `json:"metadata,optional"`
+    }
+
+    // The response data of audit log list | 审计日志列表数据
+    AuditLogListResp {
+        BaseDataInfo
+
+        // Audit log list | 审计日志列表
+        Data AuditLogListInfo `json:"data"`
+    }
+
+    // The data of audit log list | 审计日志列表数据
+    AuditLogListInfo {
+        BaseListInfo
+
+        // The API list data | 审计日志列表数据
+        Data []AuditLogInfo `json:"data"`
+    }
+
+    // Get audit log list request params | 审计日志列表请求参数
+    AuditLogListReq {
+        PageInfo
+
+        // User ID | 用户ID
+        UserId *string `json:"userId,optional" validate:"omitempty,max=36"`
+
+        // User name | 用户名
+        UserName *string `json:"userName,optional" validate:"omitempty,max=50"`
+
+        // Operation type | 操作类型
+        OperationType *string `json:"operationType,optional" validate:"omitempty,oneof=CREATE READ UPDATE DELETE"`
+
+        // Resource type | 资源类型
+        ResourceType *string `json:"resourceType,optional" validate:"omitempty,max=50"`
+
+        // Resource ID | 资源ID
+        ResourceId *string `json:"resourceId,optional" validate:"omitempty,max=50"`
+
+        // Request method | 请求方法
+        RequestMethod *string `json:"requestMethod,optional" validate:"omitempty,max=10"`
+
+        // Request path | 请求路径
+        RequestPath *string `json:"requestPath,optional" validate:"omitempty,max=255"`
+
+        // IP address | IP地址
+        IpAddress *string `json:"ipAddress,optional" validate:"omitempty,max=45"`
+
+        // Response status | 响应状态
+        ResponseStatus *int32 `json:"responseStatus,optional"`
+
+        // Start time | 开始时间
+        StartTime *int64 `json:"startTime,optional"`
+
+        // End time | 结束时间
+        EndTime *int64 `json:"endTime,optional"`
+
+        // Min duration (ms) | 最小耗时(毫秒)
+        MinDuration *int64 `json:"minDuration,optional"`
+
+        // Max duration (ms) | 最大耗时(毫秒)
+        MaxDuration *int64 `json:"maxDuration,optional"`
+    }
+
+    // Get audit log by ID request params | 通过ID获取审计日志请求参数
+    AuditLogReq {
+        UUIDReq
+    }
+
+    // The response data when create or update audit log | 创建或更新审计日志时返回的数据
+    AuditLogResp {
+        BaseDataInfo
+
+        // Audit log information | 审计日志信息
+        Data AuditLogInfo `json:"data"`
+    }
+
+
+    // Audit log statistics request params | 审计日志统计请求参数
+    AuditLogStatsReq {
+        // Start time | 开始时间
+        StartTime *int64 `json:"startTime,optional"`
+
+        // End time | 结束时间
+        EndTime *int64 `json:"endTime,optional"`
+
+        // Group by field | 分组字段
+        GroupBy *string `json:"groupBy,optional" validate:"omitempty,oneof=operation_type resource_type user_id response_status ip_address"`
+    }
+
+    // Audit log statistics response | 审计日志统计响应
+    AuditLogStatsResp {
+        BaseDataInfo
+
+        // Statistics data | 统计数据
+        Data []AuditLogStatsItem `json:"data"`
+    }
+
+    // Audit log statistics item | 审计日志统计项
+    AuditLogStatsItem {
+        // Label | 标签
+        Label string `json:"label"`
+
+        // Count | 数量
+        Count int64 `json:"count"`
+
+        // Percentage | 百分比
+        Percentage float64 `json:"percentage"`
+    }
+)
+
+
+@server(
+    group: auditlog
+)
+
+service Core {
+    // Get audit log list | 获取审计日志列表
+    @handler getAuditLogList
+    post /audit-log/list (AuditLogListReq) returns (AuditLogListResp)
+
+    // Get audit log by ID | 通过ID获取审计日志
+    @handler getAuditLogById
+    post /audit-log (AuditLogReq) returns (AuditLogResp)
+
+    // Delete audit logs | 删除审计日志
+    @handler deleteAuditLog
+    post /audit-log/delete (UUIDsReq) returns (BaseMsgResp)
+
+    // Get audit log statistics | 获取审计日志统计
+    @handler getAuditLogStats
+    post /audit-log/stats (AuditLogStatsReq) returns (AuditLogStatsResp)
+}

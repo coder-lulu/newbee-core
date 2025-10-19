@@ -1,0 +1,82 @@
+# 租户初始化插件配置
+# 此配置定义了参与租户初始化的所有插件以及它们的执行顺序
+
+# 插件列表配置
+plugins:
+  # 核心插件 - 封装现有的租户初始化逻辑
+  - name: "core"
+    enabled: true
+    config:
+      timeout: "120s"
+    retries: 3
+  
+  # 文件管理服务插件 - 示例配置（当前禁用）
+  - name: "fms"
+    enabled: false
+    config:
+      endpoint: "http://fms-service:9102"
+      init_path: "/api/v1/tenant/init"
+      timeout: "60s"
+    retries: 2
+  
+  # 媒体管理服务插件 - 示例配置（当前禁用）
+  - name: "mms"
+    enabled: false
+    config:
+      endpoint: "http://mms-service:9104"
+      init_path: "/api/v1/tenant/init"
+      timeout: "90s"
+    retries: 2
+  
+  # IP地址管理服务插件 - 示例配置（当前禁用）
+  - name: "ipam"
+    enabled: false
+    config:
+      endpoint: "http://ipam-service:9302"
+      init_path: "/api/v1/tenant/init"
+      timeout: "30s"
+    retries: 1
+  
+  # 配置管理数据库服务插件 - 示例配置（当前禁用）
+  - name: "cmdb"
+    enabled: false
+    config:
+      endpoint: "http://cmdb-service:9200"
+      init_path: "/api/v1/tenant/init"
+      timeout: "45s"
+    retries: 2
+  
+  # 运维服务插件 - 示例配置（当前禁用）
+  - name: "ops"
+    enabled: false
+    config:
+      endpoint: "http://ops-service:9402"
+      init_path: "/api/v1/tenant/init"
+      timeout: "60s"
+    retries: 2
+
+# 全局配置
+global:
+  # 最大重试次数
+  max_retries: 3
+  
+  # 总超时时间（所有插件的总执行时间）
+  total_timeout: "600s"
+  
+  # 失败时是否自动回滚
+  rollback_on_failure: true
+  
+  # 默认插件超时时间
+  default_timeout: "60s"
+  
+  # 最大并发执行插件数（当前版本按序执行，未来可支持并发）
+  max_concurrent: 1
+  
+  # 健康检查间隔
+  health_check_interval: "30s"
+  
+  # 是否启用详细日志
+  verbose_logging: true
+  
+  # 是否启用性能监控
+  enable_metrics: true

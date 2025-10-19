@@ -1,0 +1,230 @@
+# NewBee Core API Service Configuration
+Name: core.api
+Host: 0.0.0.0
+Port: 9101
+Timeout: 60000
+Mode: dev  # 开发环境模式
+
+# Auth Configuration moved to Middleware section for centralized management
+
+Log:
+  ServiceName: coreApiLogger
+  Mode: console
+  Path: /home/data/logs/core/api
+  Encoding: plain  # 使用plain模式输出日志
+  Level: info
+  Compress: false
+  KeepDays: 7
+  StackCoolDownMillis: 100
+
+# Database Configuration | 数据库配置
+DatabaseConf:
+  Type: mysql
+  Host: 192.168.26.130
+  Port: 3306
+  DBName: newbee
+  Username: root # set your username
+  Password: "123456" # set your password
+  MaxOpenConn: 100
+  MaxIdleConn: 25
+  MaxLifetime: 3600
+  MaxIdleTime: 1800
+  SSLMode: disable
+  CacheTime: 5
+
+# Redis Configuration | Redis配置
+RedisConf:
+  Host: 192.168.26.130:6380
+  Db: 0
+
+
+CoreRpc:
+  Target: 127.0.0.1:9100
+  Enabled: true
+  Timeout: 8000  # Reduced from 15000ms to 8000ms for faster failure detection
+  # Connection pool settings for better performance
+  # These settings improve connection reuse and reduce latency
+  PoolSize: 10      # Number of connection pools
+  MaxIdleConns: 5   # Maximum idle connections
+
+JobRpc:
+  Target: localhost:9105
+  Enabled: false
+
+McmsRpc:
+  Target: localhost:9106
+  Enabled: false
+  Timeout: 5000
+
+
+I18nConf:
+  Dir: # set the path of locale if you need to load files
+
+CROSConf:
+  Address: '*'    # if it is *, allow all ip and address. e.g. http://example.com
+
+
+# Casbin Configuration | Casbin权限配置
+CasbinConf:
+  ModelText: |
+    [request_definition]
+    r = sub, dom, obj, act
+
+    [policy_definition]
+    p = sub, dom, obj, act, eft
+
+    [role_definition]
+    g = _, _, _
+
+    [policy_effect]
+    e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
+
+    [matchers]
+    m = (g(r.sub, r.dom, p.sub) || (r.sub == p.sub)) && r.dom == p.dom && keyMatch2(r.obj, p.obj) && keyMatch2(r.act, p.act)
+
+# Captcha Configuration | 验证码配置  
+Captcha:
+  KeyLong: 5
+  ImgWidth: 240
+  ImgHeight: 80
+  Driver: "digit"
+  Expiration: 600 # seconds
+
+
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4101
+  Path: /metrics
+
+# Middleware Configuration: Central control for the new middleware framework
+Middleware:
+  auth:
+    accessSecret: "wgjh21g3jkb324mdasdaedhaksjhkl2323"
+    accessExpire: 86400 # 24 hours
+    enabled: true
+    skipPaths:
+      - /core/init/database
+      - /core/init/job_database
+      - /core/init/mcms_database
+      - /captcha
+      - /captcha/email
+      - /captcha/sms
+      - /configuration/system/list
+      - /oauth/login
+      - /oauth/login/callback
+      - /oauth/callback
+      - /oauth/providers
+      - /auth/login
+      - /user/login
+      - /user/logout
+      - /captcha
+      - /auth/tenant/list
+      - /user/login_by_email
+      - /user/login_by_sms
+      - /user/register
+      - /user/register_by_email
+      - /user/register_by_sms
+      - /user/reset_password_by_email
+      - /user/reset_password_by_sms
+      - /auth/tenant/list
+  audit:
+    enabled: true
+    realIpHeader: X-Forwarded-For # 参考 docs/COMMON_AUDIT_MIDDLEWARE_GUIDE.md 调整真实IP头
+    captureResponseBody: true
+    skipPaths:
+      # 验证码接口
+      - /captcha
+      - /captcha/email
+      - /captcha/sms
+      # 数据库初始化接口
+      - /core/init/database
+      - /core/init/job_database
+      - /core/init/mcms_database
+      # 公共配置接口
+      - /configuration/system/list
+      # OAuth相关公共接口
+      - /oauth/login
+      - /oauth/login/callback
+      - /oauth/callback
+      - /oauth/providers
+      # 认证相关公共接口
+      - /auth/login
+      - /auth/tenant/list
+      # 用户公共接口（登录、���册等）
+      - /user/login
+      - /user/logout
+      - /user/login_by_email
+      - /user/login_by_sms
+      - /user/register
+      - /user/register_by_email
+      - /user/register_by_sms
+      - /user/reset_password_by_email
+      - /user/reset_password_by_sms
+  tenantCheck:
+    enabled: true
+    skipPaths:
+      - /core/init/database
+      - /core/init/job_database
+      - /core/init/mcms_database
+      - /captcha
+      - /captcha/email
+      - /captcha/sms
+      - /configuration/system/list
+      - /oauth/login
+      - /oauth/login/callback
+      - /oauth/callback
+      - /oauth/providers
+      - /auth/login
+      - /auth/tenant/list
+      - /user/login
+      - /user/logout
+      - /user/login_by_email
+      - /user/login_by_sms
+      - /user/register
+      - /user/register_by_email
+      - /user/register_by_sms
+      - /user/reset_password_by_email
+      - /user/reset_password_by_sms
+  dataPerm:
+    enabled: true
+    casbinEnabled: true  # ✅ 启用基于Casbin的统一数据权限
+    skipPaths:
+      - /core/init/database
+      - /core/init/job_database
+      - /core/init/mcms_database
+      - /captcha
+      - /captcha/email
+      - /captcha/sms
+      - /configuration/system/list
+      - /oauth/login
+      - /oauth/login/callback
+      - /oauth/callback
+      - /oauth/providers
+      - /auth/login
+      - /auth/tenant/list
+      - /user/login
+      - /user/logout
+      - /user/login_by_email
+      - /user/login_by_sms
+      - /user/register
+      - /user/register_by_email
+      - /user/register_by_sms
+      - /user/reset_password_by_email
+      - /user/reset_password_by_sms
+  permission:
+    enabled: true
+    skipPaths:
+      - /core/init/database
+      - /core/init/job_database
+      - /core/init/mcms_database
+      - /user/login
+      - /user/logout
+      - /captcha
+      - /captcha/email
+      - /captcha/sms
+      - /auth/tenant/list
+  encryption:
+    enabled: true
+    key: "ZLc5cHF1ZjJzMTZ3OXh5emFiY2RlZmdoaWprbG1ub3A="
+    skipPaths: ["/health", "/metrics"]

@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+// AuditLog message
+
+message AuditLogInfo {
+  optional string id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  // Status 1: normal 2: ban | 状态 1 正常 2 禁用
+  optional uint32 status = 4;
+  // Tenant ID | 租户ID
+  optional string tenant_id = 5;
+  // User ID who performed the operation | 执行操作的用户ID
+  optional string user_id = 6;
+  // User name who performed the operation | 执行操作的用户名
+  optional string user_name = 7;
+  // Operation type | 操作类型
+  optional string operation_type = 8;
+  // Resource type that was operated on | 被操作的资源类型
+  optional string resource_type = 9;
+  // Resource ID that was operated on | 被操作的资源ID
+  optional string resource_id = 10;
+  // HTTP request method | HTTP请求方法
+  optional string request_method = 11;
+  // HTTP request path | HTTP请求路径
+  optional string request_path = 12;
+  // Request data (JSON format, sensitive data filtered) | 请求数据(JSON格式，已过滤敏感数据)
+  optional string request_data = 13;
+  // HTTP response status code | HTTP响应状态码
+  optional int64 response_status = 14;
+  // Response data (JSON format, optional) | 响应数据(JSON格式，可选)
+  optional string response_data = 15;
+  // Client IP address | 客户端IP地址
+  optional string ip_address = 16;
+  // User agent string | 用户代理字符串
+  optional string user_agent = 17;
+  // Request processing duration in milliseconds | 请求处理耗时(毫秒)
+  optional int64 duration_ms = 18;
+  // Error message if operation failed | 操作失败时的错误信息
+  optional string error_message = 19;
+  // Additional metadata in JSON format | 额外的元数据(JSON格式)
+  optional string metadata = 20;
+}
+
+message AuditLogListResp {
+  uint64 total = 1;
+  repeated AuditLogInfo data = 2;
+}
+
+message AuditLogListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string user_id = 3;
+  optional string user_name = 4;
+  optional string operation_type = 5;
+  optional string resource_type = 6;
+  optional string resource_id = 7;
+  optional string request_method = 8;
+  optional string request_path = 9;
+  optional string ip_address = 10;
+  optional int64 response_status = 11;
+  optional int64 start_time = 12;
+  optional int64 end_time = 13;
+  optional int64 min_duration = 14;
+  optional int64 max_duration = 15;
+}
+
+message AuditLogStatsReq {
+  optional int64 start_time = 1;
+  optional int64 end_time = 2;
+  optional string operation_type = 3;
+  optional string resource_type = 4;
+  optional string user_id = 5;
+}
+
+message AuditLogStatsResp {
+  uint64 total_operations = 1;
+  uint64 unique_users = 2;
+  uint64 error_count = 3;
+  double avg_duration_ms = 4;
+  repeated OperationTypeStats operation_stats = 5;
+  repeated ResourceTypeStats resource_stats = 6;
+  repeated DurationStats duration_stats = 7;
+}
+
+message OperationTypeStats {
+  string operation_type = 1;
+  uint64 count = 2;
+  double percentage = 3;
+}
+
+message ResourceTypeStats {
+  string resource_type = 1;
+  uint64 count = 2;
+  double percentage = 3;
+}
+
+message DurationStats {
+  string range_label = 1;
+  uint64 count = 2;
+  double percentage = 3;
+}
+
+
+service Core {
+
+  // AuditLog management
+  // group: auditlog
+  rpc createAuditLog (AuditLogInfo) returns (BaseUUIDResp);
+  // group: auditlog
+  rpc getAuditLogList (AuditLogListReq) returns (AuditLogListResp);
+  // group: auditlog
+  rpc getAuditLogById (UUIDReq) returns (AuditLogInfo);
+  // group: auditlog
+  rpc deleteAuditLog (UUIDsReq) returns (BaseResp);
+  // group: auditlog
+  rpc getAuditLogStats (AuditLogStatsReq) returns (AuditLogStatsResp);
+
+}

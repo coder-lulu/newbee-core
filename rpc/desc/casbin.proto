@@ -1,0 +1,228 @@
+syntax = "proto3";
+
+// Casbin权限规则信息
+message CasbinRuleInfo {
+    optional uint64 id = 1;
+    optional int64 created_at = 2;
+    optional int64 updated_at = 3;
+    optional uint64 tenant_id = 4; // 🔥 租户ID必须，确保多租户隔离
+    
+    // Casbin标准字段 - 与原生Casbin适配器兼容
+    string ptype = 5;                // 策略类型: p, g, g2等
+    optional string v0 = 6;          // 主体: 用户ID、角色代码
+    optional string v1 = 7;          // 资源: 资源路径、API端点
+    optional string v2 = 8;          // 操作: read, write, delete等
+    optional string v3 = 9;          // 效果: allow, deny
+    optional string v4 = 10;         // 条件表达式: JSON格式
+    optional string v5 = 11;         // 优先级: 数值字符串
+    
+    // 业务扩展字段 - 企业级权限管理
+    string service_name = 12;        // 服务名称: core, cmdb, workflow等
+    optional string rule_name = 13;  // 规则名称: 便于识别
+    optional string description = 14; // 规则描述
+    optional string category = 15;   // 规则分类: system, business, custom
+    optional string version = 16;    // 规则版本
+    
+    // 审批流程字段 - 企业级审批工作流
+    optional bool require_approval = 17;     // 是否需要审批
+    optional string approval_status = 18;    // 审批状态: pending, approved, rejected
+    optional uint64 approved_by = 19;        // 审批人ID
+    optional int64 approved_at = 20;         // 审批时间
+    
+    // 时间控制字段 - 临时权限支持
+    optional int64 effective_from = 21;      // 生效开始时间
+    optional int64 effective_to = 22;        // 生效结束时间
+    optional bool is_temporary = 23;         // 是否为临时权限
+    
+    // 管理字段
+    optional uint32 status = 24;             // 规则状态: 1=启用, 0=禁用
+    optional string metadata = 25;           // 元数据JSON字符串
+    repeated string tags = 26;               // 标签列表
+    optional int64 usage_count = 27;         // 使用次数统计
+    optional int64 last_used_at = 28;        // 最后使用时间
+}
+
+// Casbin规则列表请求
+message CasbinRuleListReq {
+    uint64 page = 1;
+    uint64 page_size = 2;
+    
+    // 过滤条件
+    optional string service_name = 3;        // 按服务名称过滤
+    optional string ptype = 4;               // 按策略类型过滤
+    optional string v0 = 5;                  // 按主体过滤
+    optional string v1 = 6;                  // 按资源过滤
+    optional uint32 status = 7;              // 按状态过滤
+    optional string approval_status = 8;     // 按审批状态过滤
+    optional string category = 9;            // 按分类过滤
+    optional bool is_temporary = 10;         // 按临时权限过滤
+    
+    // 时间范围过滤
+    optional int64 effective_from_start = 11; // 生效时间范围开始
+    optional int64 effective_from_end = 12;   // 生效时间范围结束
+    
+    // 搜索关键词
+    optional string keyword = 13;            // 关键词搜索(规则名称、描述)
+    
+    // 排序
+    optional string order_by = 14;           // 排序字段
+    optional string order_direction = 15;    // 排序方向: asc, desc
+}
+
+// Casbin规则列表响应
+message CasbinRuleListResp {
+    uint64 total = 1;
+    repeated CasbinRuleInfo data = 2;
+}
+
+// 权限检查请求
+message PermissionCheckReq {
+    string service_name = 1;        // 服务名称
+    string subject = 2;             // 主体: 用户ID或角色
+    string object = 3;              // 资源: 资源路径
+    string action = 4;              // 操作: 操作类型
+    map<string, string> context = 5; // 上下文信息: 用于条件化权限判断
+    
+    // 可选参数
+    optional bool enable_cache = 6;  // 是否启用缓存
+    optional bool audit_log = 7;     // 是否记录审计日志
+}
+
+// 权限检查响应
+message PermissionCheckResp {
+    bool allowed = 1;                        // 是否允许
+    string reason = 2;                       // 原因说明
+    repeated string applied_rules = 3;       // 应用的规则ID列表
+    map<string, string> data_filters = 4;   // 数据过滤条件
+    repeated string field_masks = 5;         // 字段掩码列表
+    int64 check_duration_ms = 6;             // 检查耗时(毫秒)
+    bool from_cache = 7;                     // 是否来自缓存
+}
+
+// 批量权限检查请求
+message BatchPermissionCheckReq {
+    repeated PermissionCheckReq requests = 1;
+    optional bool fail_fast = 2;            // 是否快速失败
+}
+
+// 批量权限检查响应
+message BatchPermissionCheckResp {
+    repeated PermissionCheckResp responses = 1;
+    int32 success_count = 2;                 // 成功数量
+    int32 failed_count = 3;                  // 失败数量
+}
+
+// 规则同步请求
+message SyncCasbinRulesReq {
+    optional string service_name = 1;       // 同步指定服务的规则，为空则同步所有
+    optional bool force_reload = 2;         // 是否强制重新加载
+}
+
+// 规则同步响应
+message SyncCasbinRulesResp {
+    int32 synced_count = 1;                 // 同步的规则数量
+    repeated string synced_services = 2;    // 同步的服务列表
+    int64 sync_duration_ms = 3;             // 同步耗时
+}
+
+// 刷新缓存请求
+message RefreshCasbinCacheReq {
+    optional string cache_type = 1;         // 缓存类型: rule, decision, all
+    optional string service_name = 2;       // 指定服务
+}
+
+// 刷新缓存响应
+message RefreshCasbinCacheResp {
+    bool success = 1;
+    string message = 2;
+    int32 cleared_entries = 3;              // 清理的缓存条目数
+}
+
+// 权限规则验证请求
+message ValidateCasbinRuleReq {
+    CasbinRuleInfo rule = 1;
+    optional bool check_conflicts = 2;      // 是否检查冲突
+}
+
+// 权限规则验证响应
+message ValidateCasbinRuleResp {
+    bool valid = 1;
+    repeated string errors = 2;             // 验证错误列表
+    repeated string warnings = 3;           // 警告信息列表
+    repeated string conflicts = 4;          // 冲突规则ID列表
+}
+
+// 获取用户权限摘要请求
+message GetUserPermissionSummaryReq {
+    string user_id = 1;
+    optional string service_name = 2;
+    optional bool include_inherited = 3;    // 是否包含继承权限
+}
+
+// 权限摘要信息
+message PermissionSummary {
+    string resource = 1;
+    repeated string actions = 2;
+    string source = 3;                      // 权限来源: direct, inherited
+    optional string rule_id = 4;
+}
+
+// 获取用户权限摘要响应
+message GetUserPermissionSummaryResp {
+    string user_id = 1;
+    repeated PermissionSummary permissions = 2;
+    int32 total_count = 3;
+}
+
+// 批量创建Casbin规则请求
+message BatchCreateCasbinRulesReq {
+    repeated CasbinRuleInfo rules = 1;
+}
+
+// 批量更新Casbin规则请求
+message BatchUpdateCasbinRulesReq {
+    repeated CasbinRuleInfo rules = 1;
+}
+
+// Casbin权限管理服务
+service Core {
+    // 权限规则管理
+    // group: casbin
+    rpc createCasbinRule (CasbinRuleInfo) returns (BaseIDResp);
+    // group: casbin
+    rpc updateCasbinRule (CasbinRuleInfo) returns (BaseResp);
+    // group: casbin
+    rpc deleteCasbinRule (IDsReq) returns (BaseResp);
+    // group: casbin
+    rpc getCasbinRuleList (CasbinRuleListReq) returns (CasbinRuleListResp);
+    // group: casbin
+    rpc getCasbinRuleById (IDReq) returns (CasbinRuleInfo);
+    
+    // 批量操作
+    // group: casbin
+    rpc batchCreateCasbinRules (BatchCreateCasbinRulesReq) returns (BaseResp);
+    // group: casbin
+    rpc batchUpdateCasbinRules (BatchUpdateCasbinRulesReq) returns (BaseResp);
+    // group: casbin
+    rpc batchDeleteCasbinRules (IDsReq) returns (BaseResp);
+    
+    // 权限验证
+    // group: casbin
+    rpc checkPermission (PermissionCheckReq) returns (PermissionCheckResp);
+    // group: casbin
+    rpc batchCheckPermission (BatchPermissionCheckReq) returns (BatchPermissionCheckResp);
+    
+    // 权限查询
+    // group: casbin
+    rpc getUserPermissionSummary (GetUserPermissionSummaryReq) returns (GetUserPermissionSummaryResp);
+    
+    // 规则验证
+    // group: casbin
+    rpc validateCasbinRule (ValidateCasbinRuleReq) returns (ValidateCasbinRuleResp);
+    
+    // 系统管理
+    // group: casbin
+    rpc syncCasbinRules (SyncCasbinRulesReq) returns (SyncCasbinRulesResp);
+    // group: casbin
+    rpc refreshCasbinCache (RefreshCasbinCacheReq) returns (RefreshCasbinCacheResp);
+}

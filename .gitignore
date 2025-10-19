@@ -1,0 +1,46 @@
+# Build and Release Folders
+bin-debug/
+bin-release/
+[Oo]bj/
+[Bb]in/
+node_modules/
+
+
+# Other files and folders
+.settings/
+.idea/
+.vscode/
+
+# Executables
+*.swf
+*.air
+*.ipa
+*.apk
+
+# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
+# should NOT be excluded as they contain compiler settings and other important
+# information for Eclipse / Flash Builder.
+cusCMD
+**/docs/*
+
+# config file avoid exposing private data
+*_dev.yaml
+
+core_api
+core_rpc
+core-api
+core-rpc
+nohup.out
+
+# VsCode debug files
+__debug*
+
+# Compiled binaries (prevent large files >100MB)
+api/core
+api/core_api_test
+rpc/rpc
+*/core
+*/core_*
+*_test
+*.exe
+*.bin

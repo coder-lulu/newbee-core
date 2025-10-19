@@ -1,0 +1,460 @@
+import "../base.api"
+
+type (
+    // The response data of Casbin rule information | Casbin权限规则信息
+    CasbinRuleInfo {
+        BaseIDInfo
+
+        // Tenant ID | 租户ID
+        TenantId *uint64 `json:"tenantId,optional"`
+
+        // Policy type: p, g, g2, etc. | 策略类型: p, g, g2等
+        Ptype string `json:"ptype" validate:"required,max=10"`
+
+        // Subject: user ID, role code | 主体: 用户ID、角色代码
+        V0 *string `json:"v0,optional" validate:"omitempty,max=100"`
+
+        // Object: resource path, API endpoint | 资源: 资源路径、API端点
+        V1 *string `json:"v1,optional" validate:"omitempty,max=100"`
+
+        // Action: read, write, delete, etc. | 操作: read, write, delete等
+        V2 *string `json:"v2,optional" validate:"omitempty,max=50"`
+
+        // Effect: allow, deny | 效果: allow, deny
+        V3 *string `json:"v3,optional" validate:"omitempty,max=50"`
+
+        // Condition expression: JSON format | 条件表达式: JSON格式
+        V4 *string `json:"v4,optional" validate:"omitempty,max=500"`
+
+        // Priority: numeric string | 优先级: 数值字符串
+        V5 *string `json:"v5,optional" validate:"omitempty,max=20"`
+
+        // Service name: core, cmdb, workflow, etc. | 服务名称: core, cmdb, workflow等
+        ServiceName string `json:"serviceName" validate:"required,max=50"`
+
+        // Rule name: for identification | 规则名称: 便于识别
+        RuleName *string `json:"ruleName,optional" validate:"omitempty,max=100"`
+
+        // Rule description | 规则描述
+        Description *string `json:"description,optional" validate:"omitempty,max=500"`
+
+        // Rule category: system, business, custom | 规则分类: system, business, custom
+        Category *string `json:"category,optional" validate:"omitempty,max=50"`
+
+        // Rule version | 规则版本
+        Version *string `json:"version,optional" validate:"omitempty,max=20"`
+
+        // Require approval | 是否需要审批
+        RequireApproval *bool `json:"requireApproval,optional"`
+
+        // Approval status: pending, approved, rejected | 审批状态: pending, approved, rejected
+        ApprovalStatus *string `json:"approvalStatus,optional" validate:"omitempty,max=20"`
+
+        // Approved by user ID | 审批人ID
+        ApprovedBy *uint64 `json:"approvedBy,optional"`
+
+        // Approval time | 审批时间
+        ApprovedAt *int64 `json:"approvedAt,optional"`
+
+        // Effective from time | 生效开始时间
+        EffectiveFrom *int64 `json:"effectiveFrom,optional"`
+
+        // Effective to time | 生效结束时间
+        EffectiveTo *int64 `json:"effectiveTo,optional"`
+
+        // Is temporary permission | 是否为临时权限
+        IsTemporary *bool `json:"isTemporary,optional"`
+
+        // Status | 规则状态
+        Status *uint32 `json:"status,optional" validate:"omitempty,lt=20"`
+
+        // Metadata JSON string | 元数据JSON字符串
+        Metadata *string `json:"metadata,optional" validate:"omitempty,max=1000"`
+
+        // Tags list | 标签列表
+        Tags []string `json:"tags,optional"`
+
+        // Usage count | 使用次数统计
+        UsageCount *int64 `json:"usageCount,optional"`
+
+        // Last used time | 最后使用时间
+        LastUsedAt *int64 `json:"lastUsedAt,optional"`
+    }
+
+    // Get Casbin rule list request params | Casbin规则列表请求参数
+    CasbinRuleListReq {
+        PageInfo
+
+        // Service name filter | 按服务名称过滤
+        ServiceName *string `json:"serviceName,optional" validate:"omitempty,max=50"`
+
+        // Policy type filter | 按策略类型过滤
+        Ptype *string `json:"ptype,optional" validate:"omitempty,max=10"`
+
+        // Subject filter | 按主体过滤
+        V0 *string `json:"v0,optional" validate:"omitempty,max=100"`
+
+        // Object filter | 按资源过滤
+        V1 *string `json:"v1,optional" validate:"omitempty,max=100"`
+
+        // Status filter | 按状态过滤
+        Status *uint32 `json:"status,optional" validate:"omitempty,lt=20"`
+
+        // Approval status filter | 按审批状态过滤
+        ApprovalStatus *string `json:"approvalStatus,optional" validate:"omitempty,max=20"`
+
+        // Category filter | 按分类过滤
+        Category *string `json:"category,optional" validate:"omitempty,max=50"`
+
+        // Temporary permission filter | 按临时权限过滤
+        IsTemporary *bool `json:"isTemporary,optional"`
+
+        // Effective time range start | 生效时间范围开始
+        EffectiveFromStart *int64 `json:"effectiveFromStart,optional"`
+
+        // Effective time range end | 生效时间范围结束
+        EffectiveFromEnd *int64 `json:"effectiveFromEnd,optional"`
+
+        // Search keyword | 关键词搜索(规则名称、描述)
+        Keyword *string `json:"keyword,optional" validate:"omitempty,max=100"`
+
+        // Order by field | 排序字段
+        OrderBy *string `json:"orderBy,optional" validate:"omitempty,max=50"`
+
+        // Order direction: asc, desc | 排序方向: asc, desc
+        OrderDirection *string `json:"orderDirection,optional" validate:"omitempty,oneof=asc desc"`
+    }
+
+    // Casbin rule list data | Casbin规则列表数据
+    CasbinRuleListInfo {
+        BaseListInfo
+
+        // The Casbin rule list data | Casbin规则列表数据
+        Data []CasbinRuleInfo `json:"data"`
+    }
+
+    // The response data of Casbin rule list | Casbin规则列表数据
+    CasbinRuleListResp {
+        BaseDataInfo
+
+        // Casbin rule list data | Casbin规则列表数据
+        Data CasbinRuleListInfo `json:"data"`
+    }
+
+    // Casbin rule information response | Casbin规则信息返回体
+    CasbinRuleInfoResp {
+        BaseDataInfo
+
+        // Casbin rule information | Casbin规则数据
+        Data CasbinRuleInfo `json:"data"`
+    }
+
+    // Batch create Casbin rules request | 批量创建Casbin规则请求
+    BatchCreateCasbinRulesReq {
+        // Rules list | 规则列表
+        Rules []CasbinRuleInfo `json:"rules" validate:"required,dive"`
+    }
+
+    // Batch update Casbin rules request | 批量更新Casbin规则请求
+    BatchUpdateCasbinRulesReq {
+        // Rules list | 规则列表
+        Rules []CasbinRuleInfo `json:"rules" validate:"required,dive"`
+    }
+
+    // Permission check request | 权限检查请求
+    PermissionCheckReq {
+        // Service name | 服务名称
+        ServiceName string `json:"serviceName" validate:"required,max=50"`
+
+        // Subject: user ID or role | 主体: 用户ID或角色
+        Subject string `json:"subject" validate:"required,max=100"`
+
+        // Object: resource path | 资源: 资源路径
+        Object string `json:"object" validate:"required,max=100"`
+
+        // Action: operation type | 操作: 操作类型
+        Action string `json:"action" validate:"required,max=50"`
+
+        // Context information | 上下文信息
+        Context map[string]string `json:"context,optional"`
+
+        // Enable cache | 是否启用缓存
+        EnableCache *bool `json:"enableCache,optional"`
+
+        // Audit log | 是否记录审计日志
+        AuditLog *bool `json:"auditLog,optional"`
+    }
+
+    // Permission check response | 权限检查响应
+    PermissionCheckResp {
+        BaseDataInfo
+
+        // Permission check result | 权限检查结果
+        Data PermissionCheckResult `json:"data"`
+    }
+
+    // Permission check result | 权限检查结果
+    PermissionCheckResult {
+        // Is allowed | 是否允许
+        Allowed bool `json:"allowed"`
+
+        // Reason | 原因说明
+        Reason string `json:"reason"`
+
+        // Applied rules | 应用的规则ID列表
+        AppliedRules []string `json:"appliedRules"`
+
+        // Data filters | 数据过滤条件
+        DataFilters map[string]string `json:"dataFilters"`
+
+        // Field masks | 字段掩码列表
+        FieldMasks []string `json:"fieldMasks"`
+
+        // Check duration in milliseconds | 检查耗时(毫秒)
+        CheckDurationMs int64 `json:"checkDurationMs"`
+
+        // From cache | 是否来自缓存
+        FromCache bool `json:"fromCache"`
+    }
+
+    // Batch permission check request | 批量权限检查请求
+    BatchPermissionCheckReq {
+        // Permission requests | 权限请求列表
+        Requests []PermissionCheckReq `json:"requests" validate:"required,dive"`
+
+        // Fail fast | 是否快速失败
+        FailFast *bool `json:"failFast,optional"`
+    }
+
+    // Batch permission check response | 批量权限检查响应
+    BatchPermissionCheckResp {
+        BaseDataInfo
+
+        // Batch check result | 批量检查结果
+        Data BatchPermissionCheckResult `json:"data"`
+    }
+
+    // Batch permission check result | 批量权限检查结果
+    BatchPermissionCheckResult {
+        // Permission responses | 权限响应列表
+        Responses []PermissionCheckResult `json:"responses"`
+
+        // Success count | 成功数量
+        SuccessCount int32 `json:"successCount"`
+
+        // Failed count | 失败数量
+        FailedCount int32 `json:"failedCount"`
+    }
+
+    // Get user permission summary request | 获取用户权限摘要请求
+    UserPermissionSummaryReq {
+        // User ID | 用户ID
+        UserId string `json:"userId" validate:"required,max=100"`
+
+        // Service name | 服务名称
+        ServiceName *string `json:"serviceName,optional" validate:"omitempty,max=50"`
+
+        // Include inherited permissions | 是否包含继承权限
+        IncludeInherited *bool `json:"includeInherited,optional"`
+    }
+
+    // User permission summary response | 用户权限摘要响应
+    UserPermissionSummaryResp {
+        BaseDataInfo
+
+        // Permission summary | 权限摘要数据
+        Data UserPermissionSummary `json:"data"`
+    }
+
+    // User permission summary | 用户权限摘要
+    UserPermissionSummary {
+        // User ID | 用户ID
+        UserId string `json:"userId"`
+
+        // Permissions | 权限列表
+        Permissions []PermissionSummary `json:"permissions"`
+
+        // Total count | 总数量
+        TotalCount int32 `json:"totalCount"`
+    }
+
+    // Permission summary | 权限摘要信息
+    PermissionSummary {
+        // Resource | 资源
+        Resource string `json:"resource"`
+
+        // Actions | 操作列表
+        Actions []string `json:"actions"`
+
+        // Source: direct, inherited | 权限来源: direct, inherited
+        Source string `json:"source"`
+
+        // Rule ID | 规则ID
+        RuleId *string `json:"ruleId,optional"`
+    }
+
+    // Validate Casbin rule request | 权限规则验证请求
+    ValidateCasbinRuleReq {
+        // Rule to validate | 待验证的规则
+        Rule CasbinRuleInfo `json:"rule" validate:"required"`
+
+        // Check conflicts | 是否检查冲突
+        CheckConflicts *bool `json:"checkConflicts,optional"`
+    }
+
+    // Validate Casbin rule response | 权限规则验证响应
+    ValidateCasbinRuleResp {
+        BaseDataInfo
+
+        // Validation result | 验证结果
+        Data ValidationResult `json:"data"`
+    }
+
+    // Validation result | 验证结果
+    ValidationResult {
+        // Is valid | 是否有效
+        Valid bool `json:"valid"`
+
+        // Validation errors | 验证错误列表
+        Errors []string `json:"errors"`
+
+        // Warning messages | 警告信息列表
+        Warnings []string `json:"warnings"`
+
+        // Conflict rule IDs | 冲突规则ID列表
+        Conflicts []string `json:"conflicts"`
+    }
+
+    // Sync Casbin rules request | 规则同步请求
+    SyncCasbinRulesReq {
+        // Service name filter | 同步指定服务的规则，为空则同步所有
+        ServiceName *string `json:"serviceName,optional" validate:"omitempty,max=50"`
+
+        // Force reload | 是否强制重新加载
+        ForceReload *bool `json:"forceReload,optional"`
+    }
+
+    // Sync Casbin rules response | 规则同步响应
+    SyncCasbinRulesResp {
+        BaseDataInfo
+
+        // Sync result | 同步结果
+        Data SyncResult `json:"data"`
+    }
+
+    // Sync result | 同步结果
+    SyncResult {
+        // Synced count | 同步的规则数量
+        SyncedCount int32 `json:"syncedCount"`
+
+        // Synced services | 同步的服务列表
+        SyncedServices []string `json:"syncedServices"`
+
+        // Sync duration in milliseconds | 同步耗时
+        SyncDurationMs int64 `json:"syncDurationMs"`
+    }
+
+    // Refresh Casbin cache request | 刷新缓存请求
+    RefreshCasbinCacheReq {
+        // Cache type: rule, decision, all | 缓存类型: rule, decision, all
+        CacheType *string `json:"cacheType,optional" validate:"omitempty,oneof=rule decision all"`
+
+        // Service name | 指定服务
+        ServiceName *string `json:"serviceName,optional" validate:"omitempty,max=50"`
+    }
+
+    // Refresh Casbin cache response | 刷新缓存响应
+    RefreshCasbinCacheResp {
+        BaseDataInfo
+
+        // Refresh result | 刷新结果
+        Data RefreshCacheResult `json:"data"`
+    }
+
+    // Refresh cache result | 刷新缓存结果
+    RefreshCacheResult {
+        // Success | 是否成功
+        Success bool `json:"success"`
+
+        // Message | 消息
+        Message string `json:"message"`
+
+        // Cleared entries | 清理的缓存条目数
+        ClearedEntries int32 `json:"clearedEntries"`
+    }
+)
+
+// 🔥 遵循CLAUDE.md规范 - 中间件全局注册
+@server(
+    group: casbin
+)
+
+service Core {
+    // === 权限规则管理 CRUD ===
+    
+    // Create Casbin rule | 创建权限规则
+    @handler createCasbinRule
+    post /casbin/rules (CasbinRuleInfo) returns (BaseMsgResp)
+
+    // Update Casbin rule | 更新权限规则
+    @handler updateCasbinRule
+    put /casbin/rules (CasbinRuleInfo) returns (BaseMsgResp)
+
+    // Delete Casbin rule | 删除权限规则
+    @handler deleteCasbinRule
+    delete /casbin/rules (IDsReq) returns (BaseMsgResp)
+
+    // Get Casbin rule list | 获取权限规则列表
+    @handler getCasbinRuleList
+    post /casbin/rules/list (CasbinRuleListReq) returns (CasbinRuleListResp)
+
+    // Get Casbin rule by ID | 根据ID获取权限规则
+    @handler getCasbinRuleById
+    post /casbin/rules/detail (IDReq) returns (CasbinRuleInfoResp)
+
+    // === 批量操作 ===
+    
+    // Batch create Casbin rules | 批量创建权限规则
+    @handler batchCreateCasbinRules
+    post /casbin/rules/batch/create (BatchCreateCasbinRulesReq) returns (BaseMsgResp)
+
+    // Batch update Casbin rules | 批量更新权限规则
+    @handler batchUpdateCasbinRules
+    put /casbin/rules/batch/update (BatchUpdateCasbinRulesReq) returns (BaseMsgResp)
+
+    // Batch delete Casbin rules | 批量删除权限规则
+    @handler batchDeleteCasbinRules
+    delete /casbin/rules/batch/delete (IDsReq) returns (BaseMsgResp)
+
+    // === 权限验证 ===
+    
+    // Check permission | 权限检查
+    @handler checkPermission
+    post /casbin/permission/check (PermissionCheckReq) returns (PermissionCheckResp)
+
+    // Batch check permission | 批量权限检查
+    @handler batchCheckPermission
+    post /casbin/permission/batch/check (BatchPermissionCheckReq) returns (BatchPermissionCheckResp)
+
+    // === 权限查询 ===
+    
+    // Get user permission summary | 获取用户权限摘要
+    @handler getUserPermissionSummary
+    post /casbin/permission/summary (UserPermissionSummaryReq) returns (UserPermissionSummaryResp)
+
+    // === 规则验证 ===
+    
+    // Validate Casbin rule | 验证权限规则
+    @handler validateCasbinRule
+    post /casbin/rules/validate (ValidateCasbinRuleReq) returns (ValidateCasbinRuleResp)
+
+    // === 系统管理 ===
+    
+    // Sync Casbin rules | 同步权限规则
+    @handler syncCasbinRules
+    post /casbin/system/sync (SyncCasbinRulesReq) returns (SyncCasbinRulesResp)
+
+    // Refresh Casbin cache | 刷新权限缓存
+    @handler refreshCasbinCache
+    post /casbin/system/cache/refresh (RefreshCasbinCacheReq) returns (RefreshCasbinCacheResp)
+}

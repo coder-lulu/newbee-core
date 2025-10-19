@@ -1,0 +1,605 @@
+import(
+    "../base.api"
+)
+
+type (
+    // The response data of oauth provider information | 第三方信息
+    OauthProviderInfo {
+        BaseIDInfo
+
+        // Provider name | 第三方提供商名称
+        Name *string `json:"name,optional" validate:"omitempty,max=30"`
+
+        // ClientId | 客户端ID
+        ClientId *string `json:"clientId,optional" validate:"omitempty,max=80"`
+
+        // ClientSecret | 客户端密钥
+        ClientSecret *string `json:"clientSecret,optional" validate:"omitempty,max=100"`
+
+        // Redirect URL| 跳转地址
+        RedirectUrl *string `json:"redirectUrl,optional" validate:"omitempty,max=300"`
+
+        // Scopes | 授权范围
+        Scopes *string `json:"scopes,optional" validate:"omitempty,max=100"`
+
+        // Authority URL | 授权地址
+        AuthUrl *string `json:"authUrl,optional" validate:"omitempty,max=300"`
+
+        // The URL to get token | 获取Token的地址
+        TokenUrl *string `json:"tokenUrl,optional" validate:"omitempty,max=300"`
+
+        // The type of auth | 鉴权方式
+        AuthStyle *uint64 `json:"authStyle,optional" validate:"omitempty,lt=20"`
+
+        // The URL to get user information | 获取信息地址
+        InfoUrl *string `json:"infoUrl,optional" validate:"omitempty,max=300"`
+
+        // Enhanced fields from OAuth refactor
+        // Display name | 显示名称
+        DisplayName *string `json:"displayName,optional" validate:"omitempty,max=50"`
+
+        // Provider type | 提供商类型
+        Type *string `json:"type,optional" validate:"omitempty,max=20"`
+
+        // Provider specific type | 提供商具体类型
+        ProviderType *string `json:"providerType,optional" validate:"omitempty,max=30"`
+
+        // Extra configuration as JSON | 额外配置信息
+        ExtraConfig *string `json:"extraConfig,optional"`
+
+        // Whether enabled | 是否启用
+        Enabled *bool `json:"enabled,optional"`
+
+        // Sort order | 排序
+        Sort *uint32 `json:"sort,optional"`
+
+        // Remark | 备注
+        Remark *string `json:"remark,optional" validate:"omitempty,max=255"`
+
+        // Support PKCE | 是否支持PKCE
+        SupportPkce *bool `json:"supportPkce,optional"`
+
+        // Icon URL | 图标地址
+        IconUrl *string `json:"iconUrl,optional" validate:"omitempty,max=500"`
+
+        // Cache TTL in seconds | 缓存TTL(秒)
+        CacheTtl *int32 `json:"cacheTtl,optional"`
+
+        // Webhook URL | 回调URL
+        WebhookUrl *string `json:"webhookUrl,optional" validate:"omitempty,max=500"`
+
+        // Success count | 成功次数
+        SuccessCount *int32 `json:"successCount,optional"`
+
+        // Failure count | 失败次数
+        FailureCount *int32 `json:"failureCount,optional"`
+
+        // Last used at | 最后使用时间
+        LastUsedAt *int64 `json:"lastUsedAt,optional"`
+    }
+
+    // The response data of oauth provider list | 第三方列表数据
+    OauthProviderListResp {
+        BaseDataInfo
+
+        // OauthProvider list data | 第三方列表数据
+        Data OauthProviderListInfo `json:"data"`
+    }
+
+    // OauthProvider list data | 第三方列表数据
+    OauthProviderListInfo {
+        BaseListInfo
+
+        // The API list data | 第三方列表数据
+        Data  []OauthProviderInfo  `json:"data"`
+    }
+
+    // Get oauth provider list request params | 第三方列表请求参数
+    OauthProviderListReq {
+        PageInfo
+
+        // Name | 第三方提供商名称
+        Name *string `json:"name,optional" validate:"omitempty,max=30"`
+    }
+
+    // Oauth provider information response | 第三方信息返回体
+    OauthProviderInfoResp {
+        BaseDataInfo
+
+        // OauthProvider information | 第三方数据
+        Data OauthProviderInfo `json:"data"`
+    }
+
+    // Oauth log in request | Oauth 登录请求
+    OauthLoginReq {
+        // State code to avoid hack | 状态码，请求前后相同避免安全问题
+        State string `json:"state" validate:"required,max=30"`
+
+        // Provider name | 提供商名字
+        // Example: google
+        Provider string `json:"provider" validate:"required,max=40"`
+
+        // User ID for binding (optional) | 绑定的用户ID（可选）
+        UserId *string `json:"userId,optional"`
+
+        // Client IP address | 客户端IP地址
+        ClientIp *string `json:"clientIp,optional" validate:"omitempty,max=45"`
+
+        // User agent | 用户代理
+        UserAgent *string `json:"userAgent,optional" validate:"omitempty,max=500"`
+
+        // Additional scopes | 额外权限范围
+        Scopes *string `json:"scopes,optional" validate:"omitempty,max=200"`
+    }
+
+    // Enhanced OAuth callback request | 增强的OAuth回调请求
+    OauthCallbackReq {
+        // State parameter | 状态参数
+        State string `json:"state" validate:"required"`
+
+        // Authorization code | 授权码
+        Code string `json:"code" validate:"required"`
+
+        // Error code if any | 错误码（如果有）
+        Error *string `json:"error,optional"`
+
+        // Error description | 错误描述
+        ErrorDescription *string `json:"errorDescription,optional"`
+
+        // Client IP address | 客户端IP地址
+        ClientIp *string `json:"clientIp,optional" validate:"omitempty,max=45"`
+
+        // User agent | 用户代理
+        UserAgent *string `json:"userAgent,optional" validate:"omitempty,max=500"`
+    }
+
+    // OAuth provider list for user | 用户可用的OAuth提供商列表
+    UserOauthProviderListReq {
+        // Whether only enabled providers | 是否只获取启用的提供商
+        EnabledOnly *bool `json:"enabledOnly,optional"`
+    }
+
+    // OAuth provider list for user response | 用户OAuth提供商列表响应
+    UserOauthProviderListResp {
+        BaseDataInfo
+
+        // OAuth provider list | OAuth提供商列表
+        Data []UserOauthProviderInfo `json:"data"`
+    }
+
+    // User OAuth provider info | 用户OAuth提供商信息
+    UserOauthProviderInfo {
+        // Provider ID | 提供商ID
+        Id uint64 `json:"id"`
+
+        // Provider name | 提供商名称
+        Name string `json:"name"`
+
+        // Display name | 显示名称
+        DisplayName string `json:"displayName"`
+
+        // Provider type | 提供商类型
+        Type string `json:"type"`
+
+        // Icon URL | 图标地址
+        IconUrl *string `json:"iconUrl,optional"`
+
+        // Whether user has bound this provider | 用户是否已绑定此提供商
+        IsBound bool `json:"isBound"`
+
+        // Bound account info if exists | 绑定的账户信息（如果存在）
+        BoundAccount *UserBoundAccountInfo `json:"boundAccount,optional"`
+    }
+
+    // User bound account info | 用户绑定账户信息
+    UserBoundAccountInfo {
+        // Provider username | 第三方用户名
+        ProviderUsername *string `json:"providerUsername,optional"`
+
+        // Provider nickname | 第三方昵称
+        ProviderNickname *string `json:"providerNickname,optional"`
+
+        // Provider email | 第三方邮箱
+        ProviderEmail *string `json:"providerEmail,optional"`
+
+        // Provider avatar | 第三方头像
+        ProviderAvatar *string `json:"providerAvatar,optional"`
+
+        // Last login at | 最后登录时间
+        LastLoginAt *int64 `json:"lastLoginAt,optional"`
+
+        // Login count | 登录次数
+        LoginCount uint32 `json:"loginCount"`
+    }
+
+    // Redirect response | 跳转网址返回信息
+    RedirectResp {
+        BaseDataInfo
+
+        // Redirect information | 跳转网址
+        Data  RedirectInfo `json:"data"`
+    }
+
+    // Redirect information | 跳转网址
+    RedirectInfo {
+        // Redirect URL | 跳转网址
+        URL string `json:"URL"`
+    }
+
+    // The oauth callback response data | Oauth回调数据
+    CallbackResp {
+        // User's UUID | 用户的UUID
+        UserId       string          `json:"userId"`
+
+        // User's role information| 用户的角色信息
+        // in: body
+        Role         RoleInfoSimple  `json:"role"`
+
+        // Token for authorization | 验证身份的token
+        Token        string          `json:"token"`
+
+        // Expire timestamp | 过期时间戳
+        Expire       uint64          `json:"expire"`
+    }
+
+    // OAuth Account information | OAuth账户信息
+    OauthAccountInfo {
+        BaseIDInfo
+
+        // User ID | 用户ID
+        UserId *string `json:"userId,optional"`
+
+        // Provider ID | 提供商ID
+        ProviderId *uint64 `json:"providerId,optional"`
+
+        // Provider type | 提供商类型
+        ProviderType *string `json:"providerType,optional" validate:"omitempty,max=20"`
+
+        // Provider user ID | 第三方用户ID
+        ProviderUserId *string `json:"providerUserId,optional" validate:"omitempty,max=100"`
+
+        // Provider username | 第三方用户名
+        ProviderUsername *string `json:"providerUsername,optional" validate:"omitempty,max=100"`
+
+        // Provider nickname | 第三方昵称
+        ProviderNickname *string `json:"providerNickname,optional" validate:"omitempty,max=100"`
+
+        // Provider email | 第三方邮箱
+        ProviderEmail *string `json:"providerEmail,optional" validate:"omitempty,max=255"`
+
+        // Provider avatar | 第三方头像
+        ProviderAvatar *string `json:"providerAvatar,optional" validate:"omitempty,max=500"`
+
+        // Token expires at | 令牌过期时间
+        TokenExpiresAt *int64 `json:"tokenExpiresAt,optional"`
+
+        // Extra data as JSON | 额外数据
+        ExtraData *string `json:"extraData,optional"`
+
+        // Last login at | 最后登录时间
+        LastLoginAt *int64 `json:"lastLoginAt,optional"`
+
+        // Last login IP | 最后登录IP
+        LastLoginIp *string `json:"lastLoginIp,optional" validate:"omitempty,max=45"`
+
+        // Login count | 登录次数
+        LoginCount *uint32 `json:"loginCount,optional"`
+    }
+
+    // OAuth Account list response | OAuth账户列表响应
+    OauthAccountListResp {
+        BaseDataInfo
+
+        // OAuth Account list data | OAuth账户列表数据
+        Data OauthAccountListInfo `json:"data"`
+    }
+
+    // OAuth Account list info | OAuth账户列表信息
+    OauthAccountListInfo {
+        BaseListInfo
+
+        // The OAuth account list data | OAuth账户列表数据
+        Data []OauthAccountInfo `json:"data"`
+    }
+
+    // OAuth Account list request | OAuth账户列表请求
+    OauthAccountListReq {
+        PageInfo
+
+        // Provider type | 提供商类型
+        ProviderType *string `json:"providerType,optional" validate:"omitempty,max=20"`
+
+        // Provider ID | 提供商ID
+        ProviderId *uint64 `json:"providerId,optional"`
+
+        // User ID | 用户ID
+        UserId *string `json:"userId,optional"`
+    }
+
+    // OAuth Account information response | OAuth账户信息响应
+    OauthAccountInfoResp {
+        BaseDataInfo
+
+        // OAuth Account information | OAuth账户数据
+        Data OauthAccountInfo `json:"data"`
+    }
+
+    // Bind OAuth account request | 绑定OAuth账户请求
+    BindOauthAccountReq {
+        // User ID | 用户ID
+        UserId string `json:"userId" validate:"required"`
+
+        // Provider type | 提供商类型
+        ProviderType string `json:"providerType" validate:"required,max=20"`
+
+        // Provider ID | 提供商ID
+        ProviderId uint64 `json:"providerId" validate:"required"`
+
+        // Authorization code | 授权码
+        AuthorizationCode string `json:"authorizationCode" validate:"required"`
+
+        // State parameter | 状态参数
+        State string `json:"state" validate:"required"`
+    }
+
+    // Unbind OAuth account request | 解绑OAuth账户请求
+    UnbindOauthAccountReq {
+        // User ID | 用户ID
+        UserId string `json:"userId" validate:"required"`
+
+        // Provider ID | 提供商ID
+        ProviderId uint64 `json:"providerId" validate:"required"`
+    }
+
+    // Get user OAuth accounts request | 获取用户OAuth账户请求
+    GetUserOauthAccountsReq {
+        PageInfo
+
+        // User ID | 用户ID
+        UserId string `json:"userId" validate:"required"`
+    }
+
+    // Get user OAuth accounts response | 获取用户OAuth账户响应
+    GetUserOauthAccountsResp {
+        BaseDataInfo
+
+        // User OAuth accounts data | 用户OAuth账户数据
+        Data OauthAccountListInfo `json:"data"`
+    }
+
+    // OAuth provider test request | OAuth提供商测试请求
+    OauthProviderTestReq {
+        // Provider ID | 提供商ID
+        ProviderId uint64 `json:"providerId" validate:"required"`
+    }
+
+    // OAuth provider test response | OAuth提供商测试响应
+    OauthProviderTestResp {
+        BaseDataInfo
+
+        // Test result | 测试结果
+        Data OauthProviderTestResult `json:"data"`
+    }
+
+    // OAuth provider test result | OAuth提供商测试结果
+    OauthProviderTestResult {
+        // Is connection successful | 连接是否成功
+        Connected bool `json:"connected"`
+
+        // Test URL | 测试URL
+        TestUrl string `json:"testUrl"`
+
+        // Error message if any | 错误信息
+        ErrorMessage *string `json:"errorMessage,optional"`
+
+        // Response time in milliseconds | 响应时间(毫秒)
+        ResponseTime int64 `json:"responseTime"`
+    }
+)
+
+@server (
+    group: oauthprovider
+)
+
+service Core {
+    // Oauth log in | Oauth 登录
+    @handler oauthLogin
+    post /oauth/login (OauthLoginReq) returns (RedirectResp)
+
+    // Oauth log in callback route | Oauth 登录返回调接口
+    @handler oauthCallback
+    get /oauth/login/callback () returns (CallbackResp)
+
+    // Enhanced OAuth callback with parameters | 增强的OAuth回调处理
+    @handler enhancedOauthCallback
+    post /oauth/callback (OauthCallbackReq) returns (CallbackResp)
+
+    // Get available OAuth providers for users | 获取用户可用的OAuth提供商
+    @handler getUserOauthProviders
+    post /oauth/providers (UserOauthProviderListReq) returns (UserOauthProviderListResp)
+}
+
+
+@server(
+    group: oauthprovider
+)
+
+service Core {
+    // Create oauth provider information | 创建第三方
+    @handler createOauthProvider
+    post /oauth_provider/create (OauthProviderInfo) returns (BaseMsgResp)
+
+    // Update oauth provider information | 更新第三方
+    @handler updateOauthProvider
+    post /oauth_provider/update (OauthProviderInfo) returns (BaseMsgResp)
+
+    // Delete oauth provider information | 删除第三方信息
+    @handler deleteOauthProvider
+    post /oauth_provider/delete (IDsReq) returns (BaseMsgResp)
+
+    // Get oauth provider list | 获取第三方列表
+    @handler getOauthProviderList
+    post /oauth_provider/list (OauthProviderListReq) returns (OauthProviderListResp)
+
+    // Get oauth provider by ID | 通过ID获取第三方
+    @handler getOauthProviderById
+    post /oauth_provider (IDReq) returns (OauthProviderInfoResp)
+
+    // Test oauth provider connection | 测试第三方提供商连接
+    @handler testOauthProvider
+    post /oauth_provider/test (OauthProviderTestReq) returns (OauthProviderTestResp)
+
+    // OAuth Account Management APIs | OAuth账户管理API
+    // Create oauth account | 创建OAuth账户
+    @handler createOauthAccount
+    post /oauth_account/create (OauthAccountInfo) returns (BaseMsgResp)
+
+    // Update oauth account | 更新OAuth账户
+    @handler updateOauthAccount
+    post /oauth_account/update (OauthAccountInfo) returns (BaseMsgResp)
+
+    // Delete oauth account | 删除OAuth账户
+    @handler deleteOauthAccount
+    post /oauth_account/delete (IDsReq) returns (BaseMsgResp)
+
+    // Get oauth account list | 获取OAuth账户列表
+    @handler getOauthAccountList
+    post /oauth_account/list (OauthAccountListReq) returns (OauthAccountListResp)
+
+    // Get oauth account by ID | 通过ID获取OAuth账户
+    @handler getOauthAccountById
+    post /oauth_account (IDReq) returns (OauthAccountInfoResp)
+}
+
+@server(
+    group: oauthaccount
+)
+
+service Core {
+    // User OAuth Account Management APIs | 用户OAuth账户管理API
+    // Bind OAuth account | 绑定OAuth账户
+    @handler bindOauthAccount
+    post /oauth/bind (BindOauthAccountReq) returns (BaseMsgResp)
+
+    // Unbind OAuth account | 解绑OAuth账户
+    @handler unbindOauthAccount
+    post /oauth/unbind (UnbindOauthAccountReq) returns (BaseMsgResp)
+
+    // Get user OAuth accounts | 获取用户OAuth账户
+    @handler getUserOauthAccounts
+    post /oauth/accounts (GetUserOauthAccountsReq) returns (GetUserOauthAccountsResp)
+}
+
+// OAuth statistics types | OAuth统计类型
+type (
+    // OAuth statistics request | OAuth统计请求
+    OauthStatisticsReq {
+        // Time range | 时间范围
+        TimeRange *string `json:"timeRange,optional" validate:"omitempty,oneof=7d 30d 90d 1y"`
+        
+        // Provider ID filter | 提供商ID筛选
+        ProviderId *uint64 `json:"providerId,optional"`
+    }
+
+    // OAuth statistics response | OAuth统计响应
+    OauthStatisticsResp {
+        BaseDataInfo
+
+        // Statistics data | 统计数据
+        Data OauthStatisticsData `json:"data"`
+    }
+
+    // OAuth statistics data | OAuth统计数据
+    OauthStatisticsData {
+        // Total logins | 总登录次数
+        TotalLogins int64 `json:"totalLogins"`
+
+        // Total users | 总用户数
+        TotalUsers int64 `json:"totalUsers"`
+
+        // Total providers | 总提供商数
+        TotalProviders int64 `json:"totalProviders"`
+
+        // Today logins | 今日登录次数
+        TodayLogins int64 `json:"todayLogins"`
+
+        // Average response time | 平均响应时间
+        AvgResponseTime int64 `json:"avgResponseTime"`
+
+        // Success rate | 成功率
+        SuccessRate float64 `json:"successRate"`
+
+        // Weekly growth | 周增长率
+        WeeklyGrowth float64 `json:"weeklyGrowth"`
+
+        // Monthly growth | 月增长率
+        MonthlyGrowth float64 `json:"monthlyGrowth"`
+
+        // Provider statistics | 提供商统计
+        ProviderStats []ProviderStatData `json:"providerStats"`
+
+        // Login trend data | 登录趋势数据
+        LoginTrend []LoginTrendData `json:"loginTrend"`
+    }
+
+    // Provider stat data | 提供商统计数据
+    ProviderStatData {
+        // Provider ID | 提供商ID
+        ProviderId uint64 `json:"providerId"`
+
+        // Provider name | 提供商名称
+        ProviderName string `json:"providerName"`
+
+        // Display name | 显示名称
+        DisplayName string `json:"displayName"`
+
+        // Provider type | 提供商类型
+        Type string `json:"type"`
+
+        // Icon URL | 图标地址
+        IconUrl *string `json:"iconUrl,optional"`
+
+        // Total usage | 总使用次数
+        TotalUsage int64 `json:"totalUsage"`
+
+        // Success count | 成功次数
+        SuccessCount int64 `json:"successCount"`
+
+        // Failure count | 失败次数
+        FailureCount int64 `json:"failureCount"`
+
+        // Success rate | 成功率
+        SuccessRate float64 `json:"successRate"`
+
+        // Average response time | 平均响应时间
+        AvgResponseTime int64 `json:"avgResponseTime"`
+
+        // Last used time | 最后使用时间
+        LastUsed *int64 `json:"lastUsed,optional"`
+    }
+
+    // Login trend data | 登录趋势数据
+    LoginTrendData {
+        // Date | 日期
+        Date string `json:"date"`
+
+        // Count | 数量
+        Count int64 `json:"count"`
+
+        // Success count | 成功数量
+        SuccessCount int64 `json:"successCount"`
+
+        // Failure count | 失败数量
+        FailureCount int64 `json:"failureCount"`
+    }
+)
+
+@server(
+    group: oauthprovider
+)
+
+service Core {
+    // Get OAuth statistics | 获取OAuth统计数据
+    @handler getOauthStatistics
+    post /oauth/statistics (OauthStatisticsReq) returns (OauthStatisticsResp)
+}

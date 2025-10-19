@@ -1,0 +1,1160 @@
+syntax = "proto3";
+
+package core;
+option go_package = "./core";
+
+message ApiInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional string path = 4;
+  optional string description = 5;
+  optional string api_group = 6;
+  optional string method = 7;
+  optional bool is_required = 8;
+  optional string service_name = 9;
+}
+
+message ApiListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string path = 3;
+  optional string description = 4;
+  optional string api_group = 5;
+  optional string method = 6;
+  optional string is_default = 7;
+  optional string service_name = 8;
+}
+
+message ApiListResp {
+  uint64 total = 1;
+  repeated ApiInfo data = 2;
+}
+
+message AuditLogInfo {
+  optional string id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  //  Status 1: normal 2: ban | 状态 1 正常 2 禁用
+  optional uint32 status = 4;
+  //  Tenant ID | 租户ID
+  optional string tenant_id = 5;
+  //  User ID who performed the operation | 执行操作的用户ID
+  optional string user_id = 6;
+  //  User name who performed the operation | 执行操作的用户名
+  optional string user_name = 7;
+  //  Operation type | 操作类型
+  optional string operation_type = 8;
+  //  Resource type that was operated on | 被操作的资源类型
+  optional string resource_type = 9;
+  //  Resource ID that was operated on | 被操作的资源ID
+  optional string resource_id = 10;
+  //  HTTP request method | HTTP请求方法
+  optional string request_method = 11;
+  //  HTTP request path | HTTP请求路径
+  optional string request_path = 12;
+  //  Request data (JSON format, sensitive data filtered) | 请求数据(JSON格式，已过滤敏感数据)
+  optional string request_data = 13;
+  //  HTTP response status code | HTTP响应状态码
+  optional int64 response_status = 14;
+  //  Response data (JSON format, optional) | 响应数据(JSON格式，可选)
+  optional string response_data = 15;
+  //  Client IP address | 客户端IP地址
+  optional string ip_address = 16;
+  //  User agent string | 用户代理字符串
+  optional string user_agent = 17;
+  //  Request processing duration in milliseconds | 请求处理耗时(毫秒)
+  optional int64 duration_ms = 18;
+  //  Error message if operation failed | 操作失败时的错误信息
+  optional string error_message = 19;
+  //  Additional metadata in JSON format | 额外的元数据(JSON格式)
+  optional string metadata = 20;
+}
+
+message AuditLogListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string user_id = 3;
+  optional string user_name = 4;
+  optional string operation_type = 5;
+  optional string resource_type = 6;
+  optional string resource_id = 7;
+  optional string request_method = 8;
+  optional string request_path = 9;
+  optional string ip_address = 10;
+  optional int64 response_status = 11;
+  optional int64 start_time = 12;
+  optional int64 end_time = 13;
+  optional int64 min_duration = 14;
+  optional int64 max_duration = 15;
+}
+
+message AuditLogListResp {
+  uint64 total = 1;
+  repeated AuditLogInfo data = 2;
+}
+
+message AuditLogStatsReq {
+  optional int64 start_time = 1;
+  optional int64 end_time = 2;
+  optional string operation_type = 3;
+  optional string resource_type = 4;
+  optional string user_id = 5;
+}
+
+message AuditLogStatsResp {
+  uint64 total_operations = 1;
+  uint64 unique_users = 2;
+  uint64 error_count = 3;
+  double avg_duration_ms = 4;
+  repeated OperationTypeStats operation_stats = 5;
+  repeated ResourceTypeStats resource_stats = 6;
+  repeated DurationStats duration_stats = 7;
+}
+
+message BaseIDResp {
+  uint64 id = 1;
+  string msg = 2;
+}
+
+message BaseMsg {
+  string msg = 1;
+}
+
+message BaseResp {
+  string msg = 1;
+}
+
+message BaseUUIDResp {
+  string id = 1;
+  string msg = 2;
+}
+
+//  批量创建Casbin规则请求
+message BatchCreateCasbinRulesReq {
+  repeated CasbinRuleInfo rules = 1;
+}
+
+//  批量权限检查请求
+message BatchPermissionCheckReq {
+  repeated PermissionCheckReq requests = 1;
+  optional bool fail_fast = 2;
+}
+
+//  批量权限检查响应
+message BatchPermissionCheckResp {
+  repeated PermissionCheckResp responses = 1;
+  int32 success_count = 2;
+  int32 failed_count = 3;
+}
+
+//  批量更新Casbin规则请求
+message BatchUpdateCasbinRulesReq {
+  repeated CasbinRuleInfo rules = 1;
+}
+
+message BindOauthAccountReq {
+  string user_id = 1;
+  string provider_type = 2;
+  uint64 provider_id = 3;
+  string authorization_code = 4;
+  string state = 5;
+}
+
+message CallbackReq {
+  string state = 1;
+  string code = 2;
+}
+
+//  Casbin权限规则信息
+message CasbinRuleInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint64 tenant_id = 4;
+  //  Casbin标准字段 - 与原生Casbin适配器兼容
+  string ptype = 5;
+  optional string v0 = 6;
+  optional string v1 = 7;
+  optional string v2 = 8;
+  optional string v3 = 9;
+  optional string v4 = 10;
+  optional string v5 = 11;
+  //  业务扩展字段 - 企业级权限管理
+  string service_name = 12;
+  optional string rule_name = 13;
+  optional string description = 14;
+  optional string category = 15;
+  optional string version = 16;
+  //  审批流程字段 - 企业级审批工作流
+  optional bool require_approval = 17;
+  optional string approval_status = 18;
+  optional uint64 approved_by = 19;
+  optional int64 approved_at = 20;
+  //  时间控制字段 - 临时权限支持
+  optional int64 effective_from = 21;
+  optional int64 effective_to = 22;
+  optional bool is_temporary = 23;
+  //  管理字段
+  optional uint32 status = 24;
+  optional string metadata = 25;
+  repeated string tags = 26;
+  optional int64 usage_count = 27;
+  optional int64 last_used_at = 28;
+}
+
+//  Casbin规则列表请求
+message CasbinRuleListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  //  过滤条件
+  optional string service_name = 3;
+  optional string ptype = 4;
+  optional string v0 = 5;
+  optional string v1 = 6;
+  optional uint32 status = 7;
+  optional string approval_status = 8;
+  optional string category = 9;
+  optional bool is_temporary = 10;
+  //  时间范围过滤
+  optional int64 effective_from_start = 11;
+  optional int64 effective_from_end = 12;
+  //  搜索关键词
+  optional string keyword = 13;
+  //  排序
+  optional string order_by = 14;
+  optional string order_direction = 15;
+}
+
+//  Casbin规则列表响应
+message CasbinRuleListResp {
+  uint64 total = 1;
+  repeated CasbinRuleInfo data = 2;
+}
+
+message ConfigurationInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  //  Sort Number | 排序编号
+  optional uint32 sort = 4;
+  //  State true: normal false: ban | 状态 true 正常 false 禁用
+  optional bool state = 5;
+  //  Configurarion name | 配置名称
+  optional string name = 6;
+  //  Configuration key | 配置的键名
+  optional string key = 7;
+  //  Configuraion value | 配置的值
+  optional string value = 8;
+  //  Configuration category | 配置的分类
+  optional string category = 9;
+  //  Remark | 备注
+  optional string remark = 10;
+  //  Tenant ID | 租户ID
+  optional uint64 tenant_id = 11;
+}
+
+message ConfigurationListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+  optional string key = 4;
+  optional string category = 5;
+  optional bool state = 6;
+}
+
+message ConfigurationListResp {
+  uint64 total = 1;
+  repeated ConfigurationInfo data = 2;
+}
+
+message CreateOauthSessionReq {
+  string state = 1;
+  uint64 provider_id = 2;
+  optional string user_id = 3;
+  string redirect_uri = 4;
+  optional string scope = 5;
+  optional string code_challenge = 6;
+  optional string code_challenge_method = 7;
+  optional string code_verifier = 8;
+  int64 expires_at = 9;
+  optional string client_ip = 10;
+  optional string user_agent = 11;
+}
+
+message DepartmentInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional uint32 sort = 5;
+  optional string name = 6;
+  optional string ancestors = 7;
+  optional string leader = 8;
+  optional string phone = 9;
+  optional string email = 10;
+  optional string remark = 11;
+  optional uint64 parent_id = 12;
+  optional uint64 tenant_id = 13;
+}
+
+message DepartmentListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+  optional string leader = 4;
+  optional uint32 status = 5;
+}
+
+message DepartmentListResp {
+  uint64 total = 1;
+  repeated DepartmentInfo data = 2;
+}
+
+message DictionaryDetailInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string title = 5;
+  optional string key = 6;
+  optional string value = 7;
+  optional uint64 dictionary_id = 8;
+  optional uint32 sort = 9;
+  optional uint32 is_default = 10;
+  optional string css_class = 11;
+  optional string list_class = 12;
+  optional uint64 tenant_id = 13;
+}
+
+message DictionaryDetailListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional uint64 dictionary_id = 3;
+  optional string Title = 4;
+}
+
+message DictionaryDetailListResp {
+  uint64 total = 1;
+  repeated DictionaryDetailInfo data = 2;
+}
+
+message DictionaryInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string title = 5;
+  optional string name = 6;
+  optional string desc = 7;
+  optional uint64 tenant_id = 8;
+}
+
+message DictionaryListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+  optional string title = 4;
+}
+
+message DictionaryListResp {
+  uint64 total = 1;
+  repeated DictionaryInfo data = 2;
+}
+
+message DurationStats {
+  string range_label = 1;
+  uint64 count = 2;
+  double percentage = 3;
+}
+
+//  base message
+message Empty {}
+
+message GetOauthSessionByStateReq {
+  string state = 1;
+}
+
+message GetUserOauthAccountsReq {
+  string user_id = 1;
+  uint64 page = 2;
+  uint64 page_size = 3;
+}
+
+message GetUserOauthAccountsResp {
+  uint64 total = 1;
+  repeated OauthAccountInfo data = 2;
+}
+
+//  获取用户权限摘要请求
+message GetUserPermissionSummaryReq {
+  string user_id = 1;
+  optional string service_name = 2;
+  optional bool include_inherited = 3;
+}
+
+//  获取用户权限摘要响应
+message GetUserPermissionSummaryResp {
+  string user_id = 1;
+  repeated PermissionSummary permissions = 2;
+  int32 total_count = 3;
+}
+
+message IDReq {
+  uint64 id = 1;
+}
+
+message IDsReq {
+  repeated uint64 ids = 1;
+}
+
+message MenuInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 level = 4;
+  optional uint64 parent_id = 5;
+  optional string path = 6;
+  optional string name = 7;
+  optional string redirect = 8;
+  optional string component = 9;
+  optional uint32 sort = 10;
+  optional bool disabled = 11;
+  optional Meta meta = 12;
+  optional uint32 menu_type = 13;
+  optional string service_name = 14;
+  optional string permission = 15;
+  optional uint64 tenant_id = 16;
+}
+
+message MenuInfoList {
+  uint64 total = 1;
+  repeated MenuInfo data = 2;
+}
+
+message MenuRoleInfo {
+  uint64 id = 1;
+  uint64 menu_id = 2;
+  uint64 role_id = 3;
+}
+
+message MenuRoleListResp {
+  uint64 total = 1;
+  repeated MenuRoleInfo data = 2;
+}
+
+message Meta {
+  optional string title = 1;
+  optional string icon = 2;
+  optional bool hide_menu = 3;
+  optional bool hide_breadcrumb = 4;
+  optional bool ignore_keep_alive = 5;
+  optional bool hide_tab = 6;
+  optional string frame_src = 7;
+  optional bool carry_param = 8;
+  optional bool hide_children_in_menu = 9;
+  optional bool affix = 10;
+  optional uint32 dynamic_level = 11;
+  optional string real_path = 12;
+  optional string params = 13;
+}
+
+//  OAuth Account Binding messages
+message OauthAccountInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional string user_id = 4;
+  optional uint64 provider_id = 5;
+  optional string provider_type = 6;
+  optional string provider_user_id = 7;
+  optional string provider_username = 8;
+  optional string provider_nickname = 9;
+  optional string provider_email = 10;
+  optional string provider_avatar = 11;
+  optional string access_token = 12;
+  optional string refresh_token = 13;
+  optional int64 token_expires_at = 14;
+  optional string extra_data = 15;
+  optional int64 last_login_at = 16;
+  optional string last_login_ip = 17;
+  optional uint32 login_count = 18;
+  optional uint32 status = 19;
+  optional uint64 tenant_id = 20;
+}
+
+message OauthAccountListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string provider_type = 3;
+  optional uint64 provider_id = 4;
+  optional string user_id = 5;
+}
+
+message OauthAccountListResp {
+  uint64 total = 1;
+  repeated OauthAccountInfo data = 2;
+}
+
+message OauthLoginReq {
+  string state = 1;
+  string provider = 2;
+}
+
+message OauthProviderInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional string name = 4;
+  optional string client_id = 5;
+  optional string client_secret = 6;
+  optional string redirect_url = 7;
+  optional string scopes = 8;
+  optional string auth_url = 9;
+  optional string token_url = 10;
+  optional uint64 auth_style = 11;
+  optional string info_url = 12;
+  //  Enhanced fields from OAuth refactor
+  optional string display_name = 13;
+  optional string type = 14;
+  optional string provider_type = 15;
+  optional string encrypted_secret = 16;
+  optional string encryption_key_id = 17;
+  optional string extra_config = 18;
+  optional bool enabled = 19;
+  optional uint32 sort = 20;
+  optional string remark = 21;
+  optional bool support_pkce = 22;
+  optional string icon_url = 23;
+  optional int32 cache_ttl = 24;
+  optional string webhook_url = 25;
+  optional int32 success_count = 26;
+  optional int32 failure_count = 27;
+  optional int64 last_used_at = 28;
+  //  Tenant and status fields from mixins (for completeness)
+  optional uint32 status = 29;
+  optional uint64 tenant_id = 30;
+}
+
+message OauthProviderListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+}
+
+message OauthProviderListResp {
+  uint64 total = 1;
+  repeated OauthProviderInfo data = 2;
+}
+
+message OauthRedirectResp {
+  string url = 1;
+}
+
+//  OAuth Session messages
+message OauthSessionInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional string session_id = 4;
+  optional string state = 5;
+  optional uint64 provider_id = 6;
+  optional string user_id = 7;
+  optional string redirect_uri = 8;
+  optional string scope = 9;
+  optional string code_challenge = 10;
+  optional string code_challenge_method = 11;
+  optional string code_verifier = 12;
+  optional int64 expires_at = 13;
+  optional string client_ip = 14;
+  optional string user_agent = 15;
+  optional string authorization_code = 16;
+  optional int64 code_received_at = 17;
+  optional string callback_data = 18;
+  optional string error_code = 19;
+  optional string error_description = 20;
+  optional int32 retry_count = 21;
+  optional uint32 status = 22;
+  optional uint64 tenant_id = 23;
+}
+
+message OperationTypeStats {
+  string operation_type = 1;
+  uint64 count = 2;
+  double percentage = 3;
+}
+
+message PageInfoReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+}
+
+//  权限检查请求
+message PermissionCheckReq {
+  string service_name = 1;
+  string subject = 2;
+  string object = 3;
+  string action = 4;
+  map<string,string> context = 5;
+  //  可选参数
+  optional bool enable_cache = 6;
+  optional bool audit_log = 7;
+}
+
+//  权限检查响应
+message PermissionCheckResp {
+  bool allowed = 1;
+  string reason = 2;
+  repeated string applied_rules = 3;
+  map<string,string> data_filters = 4;
+  repeated string field_masks = 5;
+  int64 check_duration_ms = 6;
+  bool from_cache = 7;
+}
+
+//  权限摘要信息
+message PermissionSummary {
+  string resource = 1;
+  repeated string actions = 2;
+  string source = 3;
+  optional string rule_id = 4;
+}
+
+message PositionInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional uint32 sort = 5;
+  optional string name = 6;
+  optional string code = 7;
+  optional string remark = 8;
+  optional uint64 dept_id = 10;
+  optional uint64 tenant_id = 11;
+}
+
+message PositionListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+  optional string code = 4;
+  optional string remark = 5;
+  optional uint64 belongDeptId = 6;
+}
+
+message PositionListResp {
+  uint64 total = 1;
+  repeated PositionInfo data = 2;
+}
+
+message PublicTenantInfo {
+  string tenant_id = 1;
+  string company_name = 2;
+  optional string domain = 3;
+}
+
+message PublicTenantListResp {
+  bool tenant_enabled = 1;
+  repeated PublicTenantInfo vo_list = 2;
+}
+
+//  刷新缓存请求
+message RefreshCasbinCacheReq {
+  optional string cache_type = 1;
+  optional string service_name = 2;
+}
+
+//  刷新缓存响应
+message RefreshCasbinCacheResp {
+  bool success = 1;
+  string message = 2;
+  int32 cleared_entries = 3;
+}
+
+message ResetPwdReq {
+  optional string opId = 1;
+  string userId = 2;
+  string password = 3;
+}
+
+message ResourceTypeStats {
+  string resource_type = 1;
+  uint64 count = 2;
+  double percentage = 3;
+}
+
+message RoleAuthReq {
+  uint64 roleId = 1;
+  repeated string userIds = 2;
+}
+
+message RoleDataScopeReq {
+  uint64 id = 1;
+  uint32 data_scope = 10;
+  repeated uint64 custom_dept_ids = 11;
+}
+
+message RoleInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string name = 5;
+  optional string code = 6;
+  optional string default_router = 7;
+  optional string remark = 8;
+  optional uint32 sort = 9;
+  optional uint32 data_scope = 10;
+  repeated uint64 custom_dept_ids = 11;
+  repeated uint64 menu_ids = 12;
+  optional uint64 tenant_id = 13;
+}
+
+message RoleListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+  optional string code = 4;
+  optional string default_router = 5;
+}
+
+message RoleListResp {
+  uint64 total = 1;
+  repeated RoleInfo data = 2;
+}
+
+//  authorization message
+message RoleMenuAuthorityReq {
+  uint64 role_id = 1;
+  repeated uint64 menu_ids = 2;
+}
+
+//  return the role's authorization menu's ids
+message RoleMenuAuthorityResp {
+  repeated uint64 menu_ids = 1;
+}
+
+message RoleStatusChangeParam {
+  uint64 id = 1;
+  uint32 status = 4;
+}
+
+message RoleUnallocatedListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  uint64 roleId = 3;
+  optional string userName = 4;
+  optional string mobile = 5;
+}
+
+//  规则同步请求
+message SyncCasbinRulesReq {
+  optional string service_name = 1;
+  optional bool force_reload = 2;
+}
+
+//  规则同步响应
+message SyncCasbinRulesResp {
+  int32 synced_count = 1;
+  repeated string synced_services = 2;
+  int64 sync_duration_ms = 3;
+}
+
+message TenantCodeReq {
+  string code = 1;
+}
+
+message TenantInfo {
+  optional uint64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string name = 5;
+  optional string code = 6;
+  optional string description = 7;
+  optional int64 expired_at = 8;
+  optional string config = 9;
+  optional uint64 created_by = 10;
+}
+
+message TenantInitReq {
+  uint64 tenant_id = 1;
+  optional string admin_username = 2;
+  optional string admin_password = 3;
+  optional string admin_email = 4;
+}
+
+message TenantListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string name = 3;
+  optional string code = 4;
+  optional uint32 status = 5;
+  optional uint64 created_by = 6;
+}
+
+message TenantListResp {
+  uint64 total = 1;
+  repeated TenantInfo data = 2;
+}
+
+message TenantStatusReq {
+  uint64 id = 1;
+  uint32 status = 2;
+}
+
+message TokenInfo {
+  optional string id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string uuid = 5;
+  optional string token = 6;
+  optional string source = 7;
+  optional int64 expired_at = 8;
+  optional string username = 9;
+  optional uint64 tenant_id = 10;
+}
+
+message TokenListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string username = 3;
+  optional string nickname = 4;
+  optional string email = 5;
+  optional string uuid = 6;
+}
+
+message TokenListResp {
+  uint64 total = 1;
+  repeated TokenInfo data = 2;
+}
+
+message UUIDReq {
+  string id = 1;
+}
+
+message UUIDsReq {
+  repeated string ids = 1;
+}
+
+message UnbindOauthAccountReq {
+  string user_id = 1;
+  uint64 provider_id = 2;
+}
+
+message UpdateOauthSessionReq {
+  string session_id = 1;
+  optional string authorization_code = 2;
+  optional string callback_data = 3;
+  optional string error_code = 4;
+  optional string error_description = 5;
+}
+
+message UserInfo {
+  optional string id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional uint32 status = 4;
+  optional string username = 5;
+  optional string password = 6;
+  optional string nickname = 7;
+  optional string description = 8;
+  optional string home_path = 9;
+  repeated uint64 role_ids = 10;
+  optional string mobile = 11;
+  optional string email = 12;
+  optional string avatar = 13;
+  optional uint64 department_id = 14;
+  repeated uint64 position_ids = 15;
+  repeated string role_codes = 16;
+  repeated string role_names = 17;
+  optional string department_name = 18;
+  optional uint64 tenant_id = 19;
+}
+
+message UserListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  optional string username = 3;
+  optional string nickname = 4;
+  optional string email = 5;
+  optional string mobile = 6;
+  repeated uint64 role_ids = 7;
+  optional uint64 department_id = 8;
+  repeated uint64 position_ids = 9;
+  optional string description = 10;
+}
+
+message UserListResp {
+  uint64 total = 1;
+  repeated UserInfo data = 2;
+}
+
+message UsernameReq {
+  string username = 1;
+}
+
+//  权限规则验证请求
+message ValidateCasbinRuleReq {
+  CasbinRuleInfo rule = 1;
+  optional bool check_conflicts = 2;
+}
+
+//  权限规则验证响应
+message ValidateCasbinRuleResp {
+  bool valid = 1;
+  repeated string errors = 2;
+  repeated string warnings = 3;
+  repeated string conflicts = 4;
+}
+
+service Core {
+  //  API management
+  //  group: api
+  rpc createApi(ApiInfo) returns (BaseIDResp);
+  //  group: api
+  rpc updateApi(ApiInfo) returns (BaseResp);
+  //  group: api
+  rpc getApiList(ApiListReq) returns (ApiListResp);
+  //  group: api
+  rpc getApiById(IDReq) returns (ApiInfo);
+  //  group: api
+  rpc deleteApi(IDsReq) returns (BaseResp);
+  //  AuditLog management
+  //  group: auditlog
+  rpc createAuditLog(AuditLogInfo) returns (BaseUUIDResp);
+  //  group: auditlog
+  rpc getAuditLogList(AuditLogListReq) returns (AuditLogListResp);
+  //  group: auditlog
+  rpc getAuditLogById(UUIDReq) returns (AuditLogInfo);
+  //  group: auditlog
+  rpc deleteAuditLog(UUIDsReq) returns (BaseResp);
+  //  group: auditlog
+  rpc getAuditLogStats(AuditLogStatsReq) returns (AuditLogStatsResp);
+  //  group: authority
+  rpc getMenuAuthority(IDReq) returns (RoleMenuAuthorityResp);
+  //  group: authority
+  rpc createOrUpdateMenuAuthority(RoleMenuAuthorityReq) returns (BaseResp);
+  //  group: base
+  rpc initDatabase(Empty) returns (BaseResp);
+  //  权限规则管理
+  //  group: casbin
+  rpc createCasbinRule(CasbinRuleInfo) returns (BaseIDResp);
+  //  group: casbin
+  rpc updateCasbinRule(CasbinRuleInfo) returns (BaseResp);
+  //  group: casbin
+  rpc deleteCasbinRule(IDsReq) returns (BaseResp);
+  //  group: casbin
+  rpc getCasbinRuleList(CasbinRuleListReq) returns (CasbinRuleListResp);
+  //  group: casbin
+  rpc getCasbinRuleById(IDReq) returns (CasbinRuleInfo);
+  //  批量操作
+  //  group: casbin
+  rpc batchCreateCasbinRules(BatchCreateCasbinRulesReq) returns (BaseResp);
+  //  group: casbin
+  rpc batchUpdateCasbinRules(BatchUpdateCasbinRulesReq) returns (BaseResp);
+  //  group: casbin
+  rpc batchDeleteCasbinRules(IDsReq) returns (BaseResp);
+  //  权限验证
+  //  group: casbin
+  rpc checkPermission(PermissionCheckReq) returns (PermissionCheckResp);
+  //  group: casbin
+  rpc batchCheckPermission(BatchPermissionCheckReq) returns (BatchPermissionCheckResp);
+  //  权限查询
+  //  group: casbin
+  rpc getUserPermissionSummary(GetUserPermissionSummaryReq) returns (GetUserPermissionSummaryResp);
+  //  规则验证
+  //  group: casbin
+  rpc validateCasbinRule(ValidateCasbinRuleReq) returns (ValidateCasbinRuleResp);
+  //  系统管理
+  //  group: casbin
+  rpc syncCasbinRules(SyncCasbinRulesReq) returns (SyncCasbinRulesResp);
+  //  group: casbin
+  rpc refreshCasbinCache(RefreshCasbinCacheReq) returns (RefreshCasbinCacheResp);
+  //  Configuration management
+  //  group: configuration
+  rpc createConfiguration(ConfigurationInfo) returns (BaseIDResp);
+  //  group: configuration
+  rpc updateConfiguration(ConfigurationInfo) returns (BaseResp);
+  //  group: configuration
+  rpc getConfigurationList(ConfigurationListReq) returns (ConfigurationListResp);
+  //  group: configuration
+  rpc getConfigurationById(IDReq) returns (ConfigurationInfo);
+  //  group: configuration
+  rpc deleteConfiguration(IDsReq) returns (BaseResp);
+  //  group: configuration
+  rpc refreshConfigurationCache(Empty) returns (BaseResp);
+  //  Department management
+  //  group: department
+  rpc createDepartment(DepartmentInfo) returns (BaseIDResp);
+  //  group: department
+  rpc updateDepartment(DepartmentInfo) returns (BaseResp);
+  //  group: department
+  rpc getDepartmentList(DepartmentListReq) returns (DepartmentListResp);
+  //  group: department
+  rpc getDepartmentById(IDReq) returns (DepartmentInfo);
+  //  group: department
+  rpc deleteDepartment(IDsReq) returns (BaseResp);
+  //  group: department
+  rpc initDeptDataPermToRedis(Empty) returns (BaseResp);
+  //  Dictionary management
+  //  group: dictionary
+  rpc createDictionary(DictionaryInfo) returns (BaseIDResp);
+  //  group: dictionary
+  rpc updateDictionary(DictionaryInfo) returns (BaseResp);
+  //  group: dictionary
+  rpc getDictionaryList(DictionaryListReq) returns (DictionaryListResp);
+  //  group: dictionary
+  rpc getDictionaryById(IDReq) returns (DictionaryInfo);
+  //  group: dictionary
+  rpc deleteDictionary(IDsReq) returns (BaseResp);
+  //  DictionaryDetail management
+  //  group: dictionarydetail
+  rpc createDictionaryDetail(DictionaryDetailInfo) returns (BaseIDResp);
+  //  group: dictionarydetail
+  rpc updateDictionaryDetail(DictionaryDetailInfo) returns (BaseResp);
+  //  group: dictionarydetail
+  rpc getDictionaryDetailList(DictionaryDetailListReq) returns (DictionaryDetailListResp);
+  //  group: dictionarydetail
+  rpc getDictionaryDetailById(IDReq) returns (DictionaryDetailInfo);
+  //  group: dictionarydetail
+  rpc deleteDictionaryDetail(IDsReq) returns (BaseResp);
+  //  group: dictionarydetail
+  rpc getDictionaryDetailByDictionaryName(BaseMsg) returns (DictionaryDetailListResp);
+  //  group: menu
+  rpc createMenu(MenuInfo) returns (BaseIDResp);
+  //  group: menu
+  rpc updateMenu(MenuInfo) returns (BaseResp);
+  //  group: menu
+  rpc deleteMenu(IDReq) returns (BaseResp);
+  //  group: menu
+  rpc getMenu(IDReq) returns (MenuInfo);
+  //  group: menu
+  rpc getMenuListByRole(BaseMsg) returns (MenuInfoList);
+  //  group: menu
+  rpc getMenuList(PageInfoReq) returns (MenuInfoList);
+  //  OauthProvider management
+  //  group: oauthprovider
+  rpc createOauthProvider(OauthProviderInfo) returns (BaseIDResp);
+  //  group: oauthprovider
+  rpc updateOauthProvider(OauthProviderInfo) returns (BaseResp);
+  //  group: oauthprovider
+  rpc getOauthProviderList(OauthProviderListReq) returns (OauthProviderListResp);
+  //  group: oauthprovider
+  rpc getOauthProviderById(IDReq) returns (OauthProviderInfo);
+  //  group: oauthprovider
+  rpc deleteOauthProvider(IDsReq) returns (BaseResp);
+  //  group: oauthprovider
+  rpc oauthLogin(OauthLoginReq) returns (OauthRedirectResp);
+  //  group: oauthprovider
+  rpc oauthCallback(CallbackReq) returns (UserInfo);
+  //  OAuth Account Binding management
+  //  group: oauthaccount
+  rpc createOauthAccount(OauthAccountInfo) returns (BaseIDResp);
+  //  group: oauthaccount
+  rpc updateOauthAccount(OauthAccountInfo) returns (BaseResp);
+  //  group: oauthaccount
+  rpc getOauthAccountList(OauthAccountListReq) returns (OauthAccountListResp);
+  //  group: oauthaccount
+  rpc getOauthAccountById(IDReq) returns (OauthAccountInfo);
+  //  group: oauthaccount
+  rpc deleteOauthAccount(IDsReq) returns (BaseResp);
+  //  group: oauthaccount
+  rpc bindOauthAccount(BindOauthAccountReq) returns (BaseResp);
+  //  group: oauthaccount
+  rpc unbindOauthAccount(UnbindOauthAccountReq) returns (BaseResp);
+  //  group: oauthaccount
+  rpc getUserOauthAccounts(GetUserOauthAccountsReq) returns (GetUserOauthAccountsResp);
+  //  OAuth Session management
+  //  group: oauthsession
+  rpc createOauthSession(CreateOauthSessionReq) returns (BaseIDResp);
+  //  group: oauthsession
+  rpc updateOauthSession(UpdateOauthSessionReq) returns (BaseResp);
+  //  group: oauthsession
+  rpc getOauthSessionByState(GetOauthSessionByStateReq) returns (OauthSessionInfo);
+  //  group: oauthsession
+  rpc deleteOauthSession(IDReq) returns (BaseResp);
+  //  Position management
+  //  group: position
+  rpc createPosition(PositionInfo) returns (BaseIDResp);
+  //  group: position
+  rpc updatePosition(PositionInfo) returns (BaseResp);
+  //  group: position
+  rpc getPositionList(PositionListReq) returns (PositionListResp);
+  //  group: position
+  rpc getPositionById(IDReq) returns (PositionInfo);
+  //  group: position
+  rpc deletePosition(IDsReq) returns (BaseResp);
+  //  Role management
+  //  group: role
+  rpc createRole(RoleInfo) returns (BaseIDResp);
+  //  group: role
+  rpc updateRole(RoleInfo) returns (BaseResp);
+  //  group: role
+  rpc getRoleList(RoleListReq) returns (RoleListResp);
+  //  group: role
+  rpc getRoleById(IDReq) returns (RoleInfo);
+  //  group: role
+  rpc deleteRole(IDsReq) returns (BaseResp);
+  //  group: role
+  rpc initRoleDataPermToRedis(Empty) returns (BaseResp);
+  //  group: role
+  rpc assignRoleDataScope(RoleDataScopeReq) returns (BaseResp);
+  //  group: role
+  rpc cancelAuth(RoleAuthReq) returns (BaseResp);
+  //  group: role
+  rpc addAuth(RoleAuthReq) returns (BaseResp);
+  //  group: role
+  rpc changeRoleStatus(RoleStatusChangeParam) returns (BaseResp);
+  //  Tenant management
+  //  group: tenant
+  rpc createTenant(TenantInfo) returns (BaseIDResp);
+  //  group: tenant
+  rpc updateTenant(TenantInfo) returns (BaseResp);
+  //  group: tenant
+  rpc getTenantList(TenantListReq) returns (TenantListResp);
+  //  group: tenant
+  rpc getTenantById(IDReq) returns (TenantInfo);
+  //  group: tenant
+  rpc getTenantByCode(TenantCodeReq) returns (TenantInfo);
+  //  group: tenant
+  rpc deleteTenant(IDsReq) returns (BaseResp);
+  //  group: tenant
+  rpc updateTenantStatus(TenantStatusReq) returns (BaseResp);
+  //  group: tenant
+  rpc initTenant(TenantInitReq) returns (BaseResp);
+  //  group: public
+  rpc getPublicTenantList(Empty) returns (PublicTenantListResp);
+  //  Token management
+  //  group: token
+  rpc createToken(TokenInfo) returns (BaseUUIDResp);
+  //  group: token
+  rpc deleteToken(UUIDsReq) returns (BaseResp);
+  //  group: token
+  rpc getTokenList(TokenListReq) returns (TokenListResp);
+  //  group: token
+  rpc getTokenById(UUIDReq) returns (TokenInfo);
+  //  group: token
+  rpc blockUserAllToken(UUIDReq) returns (BaseResp);
+  //  group: token
+  rpc updateToken(TokenInfo) returns (BaseResp);
+  //  User management
+  //  group: user
+  rpc createUser(UserInfo) returns (BaseUUIDResp);
+  //  group: user
+  rpc updateUser(UserInfo) returns (BaseResp);
+  //  group: user
+  rpc getUserList(UserListReq) returns (UserListResp);
+  //  group: user
+  rpc getUserById(UUIDReq) returns (UserInfo);
+  //  group: user
+  rpc getUserByUsername(UsernameReq) returns (UserInfo);
+  //  group: user
+  rpc deleteUser(UUIDsReq) returns (BaseResp);
+  //  group: user
+  rpc resetPwd(ResetPwdReq) returns (BaseResp);
+  //  group: user
+  rpc unallocatedList(RoleUnallocatedListReq) returns (UserListResp);
+}
+

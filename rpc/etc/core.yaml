@@ -1,0 +1,64 @@
+Name: core.rpc
+ListenOn: 0.0.0.0:9100
+Timeout: 30000
+Mode: dev  # 开发环境模式（启用彩色日志）
+
+DatabaseConf:
+  Type: mysql
+  Host: 192.168.26.130
+  Port: 3306
+  DBName: newbee
+  Username: root # set your username
+  Password: "123456" # set your password
+  MaxOpenConn: 50
+  MaxIdleConn: 20
+  MaxLifetime: 1800
+  MaxIdleTime: 900
+  SSLMode: disable
+  CacheTime: 5
+
+RedisConf:
+  Host: 192.168.26.130:6380
+
+Log:
+  ServiceName: coreRpcLogger
+  Mode: console
+  Path: /home/data/logs/core/rpc
+  Encoding: plain 
+  Level: info
+  Compress: false
+  KeepDays: 7
+  StackCoolDownMillis: 100
+
+Prometheus:
+  Host: 0.0.0.0
+  Port: 4100
+  Path: /metrics
+
+CasbinConf:
+  ModelText: |
+    [request_definition]
+    r = sub, dom, obj, act
+
+    [policy_definition]
+    p = sub, dom, obj, act, eft
+
+    [role_definition]
+    g = _, _, _
+
+    [policy_effect]
+    e = some(where (p.eft == allow)) && !some(where (p.eft == deny))
+
+    [matchers]
+    m = (g(r.sub, r.dom, p.sub) || (r.sub == p.sub)) && r.dom == p.dom && keyMatch2(r.obj, p.obj) && keyMatch2(r.act, p.act)
+
+# Tracing Analysis
+
+#Telemetry:
+#  Name: core-rpc
+#  Endpoint: localhost:4317
+#  Sampler: 1.0
+#  Batcher: otlpgrpc # grpc
+
+# 🔐 OAuth Provider加密密钥配置 (生产环境必须修改为强密钥)
+EncryptionKey: "production-encryption-key-32bytes-change-me-in-prod"  # 必须是32字节或更长
