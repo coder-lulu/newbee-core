@@ -2,12 +2,10 @@ package oauthprovider
 
 import (
 	"context"
-	"time"
-
-	"github.com/coder-lulu/newbee-common/v2/i18n"
+	"fmt"
 	"github.com/coder-lulu/newbee-core/api/internal/svc"
 	"github.com/coder-lulu/newbee-core/api/internal/types"
-
+	"github.com/coder-lulu/newbee-core/rpc/types/core"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -18,124 +16,54 @@ type GetOauthStatisticsLogic struct {
 }
 
 func NewGetOauthStatisticsLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetOauthStatisticsLogic {
-	return &GetOauthStatisticsLogic{
-		Logger: logx.WithContext(ctx),
-		ctx:    ctx,
-		svcCtx: svcCtx,
-	}
+	return &GetOauthStatisticsLogic{Logger: logx.WithContext(ctx), ctx: ctx, svcCtx: svcCtx}
 }
-
-func (l *GetOauthStatisticsLogic) GetOauthStatistics(req *types.OauthStatisticsReq) (resp *types.OauthStatisticsResp, err error) {
-	// 生成模拟统计数据
-	// 在实际项目中，这里应该从数据库查询真实数据
-
-	// 生成提供商统计数据
-	providerStats := []types.ProviderStatData{
-		{
-			ProviderId:      1,
-			ProviderName:    "google",
-			DisplayName:     "Google",
-			Type:            "google",
-			IconUrl:         stringPtr(""),
-			TotalUsage:      2150,
-			SuccessCount:    2105,
-			FailureCount:    45,
-			SuccessRate:     97.9,
-			AvgResponseTime: 85,
-			LastUsed:        int64Ptr(time.Now().Unix()),
-		},
-		{
-			ProviderId:      2,
-			ProviderName:    "wechat",
-			DisplayName:     "微信",
-			Type:            "wechat",
-			IconUrl:         stringPtr(""),
-			TotalUsage:      1890,
-			SuccessCount:    1812,
-			FailureCount:    78,
-			SuccessRate:     95.9,
-			AvgResponseTime: 120,
-			LastUsed:        int64Ptr(time.Now().Unix()),
-		},
-		{
-			ProviderId:      3,
-			ProviderName:    "github",
-			DisplayName:     "GitHub",
-			Type:            "github",
-			IconUrl:         stringPtr(""),
-			TotalUsage:      1245,
-			SuccessCount:    1222,
-			FailureCount:    23,
-			SuccessRate:     98.2,
-			AvgResponseTime: 95,
-			LastUsed:        int64Ptr(time.Now().Unix()),
-		},
-		{
-			ProviderId:      4,
-			ProviderName:    "qq",
-			DisplayName:     "QQ",
-			Type:            "qq",
-			IconUrl:         stringPtr(""),
-			TotalUsage:      856,
-			SuccessCount:    822,
-			FailureCount:    34,
-			SuccessRate:     96.0,
-			AvgResponseTime: 110,
-			LastUsed:        int64Ptr(time.Now().Unix()),
-		},
+func (l *GetOauthStatisticsLogic) GetOauthStatistics(req *types.OauthStatisticsReq) (*types.OauthStatisticsResp, error) {
+	data := types.OauthStatisticsData{ProviderStats: []types.ProviderStatData{}, LoginTrend: []types.LoginTrendData{}}
+	var read uint64
+	var success int64
+	for page := uint64(1); ; page++ {
+		providers, err := l.svcCtx.CoreRpc.GetOauthProviderList(l.ctx, &core.OauthProviderListReq{Page: page, PageSize: 20})
+		if err != nil {
+			return nil, err
+		}
+		if providers == nil {
+			return nil, fmt.Errorf("OAuth provider list response is missing")
+		}
+		read += uint64(len(providers.Data))
+		for _, provider := range providers.Data {
+			if provider == nil {
+				return nil, fmt.Errorf("OAuth provider list contains an empty row")
+			}
+			if req.ProviderId != nil && provider.GetId() != *req.ProviderId {
+				continue
+			}
+			ok, failed := int64(provider.GetSuccessCount()), int64(provider.GetFailureCount())
+			total := ok + failed
+			rate := float64(0)
+			if total > 0 {
+				rate = float64(ok) / float64(total) * 100
+			}
+			name := provider.GetDisplayName()
+			if name == "" {
+				name = provider.GetName()
+			}
+			data.ProviderStats = append(data.ProviderStats, types.ProviderStatData{ProviderId: provider.GetId(), ProviderName: provider.GetName(), DisplayName: name, Type: provider.GetType(), IconUrl: provider.IconUrl, TotalUsage: total, SuccessCount: ok, FailureCount: failed, SuccessRate: rate, LastUsed: provider.LastUsedAt})
+			data.TotalLogins += total
+			success += ok
+		}
+		if read >= providers.Total {
+			break
+		}
+		if len(providers.Data) == 0 || page >= 1000 {
+			return nil, fmt.Errorf("OAuth provider pagination ended before all records were read")
+		}
 	}
-
-	// 生成登录趋势数据
-	var loginTrend []types.LoginTrendData
-	now := time.Now()
-	for i := 6; i >= 0; i-- {
-		date := now.AddDate(0, 0, -i)
-		loginTrend = append(loginTrend, types.LoginTrendData{
-			Date:         date.Format("2006-01-02"),
-			Count:        int64(200 + i*20),
-			SuccessCount: int64(190 + i*19),
-			FailureCount: int64(10 + i),
-		})
+	data.TotalProviders = int64(len(data.ProviderStats))
+	if data.TotalLogins > 0 {
+		data.SuccessRate = float64(success) / float64(data.TotalLogins) * 100
 	}
-
-	// 计算总体统计
-	var totalLogins, totalSuccessLogins, totalFailureLogins int64
-	for _, stat := range providerStats {
-		totalLogins += stat.TotalUsage
-		totalSuccessLogins += stat.SuccessCount
-		totalFailureLogins += stat.FailureCount
-	}
-
-	successRate := float64(totalSuccessLogins) / float64(totalLogins) * 100
-	avgResponseTime := int64(108) // 模拟平均响应时间
-
-	data := types.OauthStatisticsData{
-		TotalLogins:     totalLogins,
-		TotalUsers:      3456,
-		TotalProviders:  int64(len(providerStats)),
-		TodayLogins:     234,
-		AvgResponseTime: avgResponseTime,
-		SuccessRate:     successRate,
-		WeeklyGrowth:    12.5,
-		MonthlyGrowth:   8.3,
-		ProviderStats:   providerStats,
-		LoginTrend:      loginTrend,
-	}
-
-	return &types.OauthStatisticsResp{
-		BaseDataInfo: types.BaseDataInfo{
-			Code: 0,
-			Msg:  l.svcCtx.Trans.Trans(l.ctx, i18n.Success),
-		},
-		Data: data,
-	}, nil
-}
-
-// 辅助函数
-func stringPtr(s string) *string {
-	return &s
-}
-
-func int64Ptr(i int64) *int64 {
-	return &i
+	// Provider counters have no event timestamps, distinct-user counts or latency.
+	// Leave unavailable legacy numeric fields at zero and return no invented trend.
+	return &types.OauthStatisticsResp{BaseDataInfo: types.BaseDataInfo{Code: 0, Msg: "success"}, Data: data}, nil
 }

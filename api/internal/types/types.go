@@ -1812,9 +1812,9 @@ type TaskLogListInfo struct {
 type TaskLogListReq struct {
 	PageInfo
 	// TaskId | 任务ID
-	TaskId *uint64 `json:"taskId"`
+	TaskId *uint64 `json:"taskId,optional"`
 	// Result | 任务结果
-	Result *uint32 `json:"result"`
+	Result *uint32 `json:"result,optional"`
 }
 
 // TaskLog information response | 任务日志信息返回体
