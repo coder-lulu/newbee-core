@@ -1,3 +1,4 @@
+# Copy this file to core.yaml and configure local values or environment variables.
 # NewBee Core API Service Configuration
 Name: core.api
 Host: 0.0.0.0
@@ -20,11 +21,11 @@ Log:
 # Database Configuration | 数据库配置
 DatabaseConf:
   Type: mysql
-  Host: 192.168.26.130
-  Port: 3306
+  Host: 192.168.10.100
+  Port: 13306
   DBName: newbee
   Username: root # set your username
-  Password: "123456" # set your password
+  Password: "${CORE_API_ETC_CORE_YAML_PASSWORD}"
   MaxOpenConn: 100
   MaxIdleConn: 25
   MaxLifetime: 3600
@@ -34,7 +35,8 @@ DatabaseConf:
 
 # Redis Configuration | Redis配置
 RedisConf:
-  Host: 192.168.26.130:6380
+  Host: 192.168.10.100:26739
+  Pass: "123456"
   Db: 0
 
 
@@ -82,7 +84,7 @@ CasbinConf:
     [matchers]
     m = (g(r.sub, r.dom, p.sub) || (r.sub == p.sub)) && r.dom == p.dom && keyMatch2(r.obj, p.obj) && keyMatch2(r.act, p.act)
 
-# Captcha Configuration | 验证码配置  
+# Captcha Configuration | 验证码配置
 Captcha:
   KeyLong: 5
   ImgWidth: 240
@@ -100,7 +102,7 @@ Prometheus:
 # Middleware Configuration: Central control for the new middleware framework
 Middleware:
   auth:
-    accessSecret: "wgjh21g3jkb324mdasdaedhaksjhkl2323"
+    accessSecret: "${CORE_API_ETC_CORE_YAML_ACCESSSECRET}"
     accessExpire: 86400 # 24 hours
     enabled: true
     skipPaths:

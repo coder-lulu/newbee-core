@@ -21,7 +21,6 @@ node_modules/
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
 cusCMD
-**/docs/*
 
 # config file avoid exposing private data
 *_dev.yaml
@@ -47,3 +46,53 @@ rpc/rpc
 api/api
 rpc/io-rpc
 rpc/rpc
+
+# Local caches, diagnostics, credentials and build products
+/logs/
+**/logs/
+*.log
+.gocache/
+.gomodcache/
+.cache/
+.pnpm-store/
+node_modules/
+.turbo/
+.output/
+.nitro/
+dist/
+coverage/
+.claude/settings.local.json
+.trae/
+.env.local
+.env.*.local
+*_dev.yaml
+*.pem
+*.key
+*.p12
+*.pfx
+*.exe
+*.test
+*.prof
+*.out
+
+/api/etc/core.yaml
+
+/rpc/etc/core.yaml
+
+/api/core-api
+
+/rpc/core-rpc
+
+/rpc/rpc
+
+*.sql.gz
+
+*.db
+
+*.db-wal
+
+*.db-shm
+
+*.sqlite
+
+*.sqlite3

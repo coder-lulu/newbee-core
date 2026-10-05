@@ -584,8 +584,8 @@ func (l *InitDatabaseLogic) insertProviderData(ctx context.Context) error {
 		SetInfoURL("https://api.github.com/user"),
 	)
 
-    tenantCtx := hooks.SetTenantIDToContext(context.Background(), 1)
-    err := l.svcCtx.DB.OauthProvider.CreateBulk(providers...).Exec(tenantCtx)
+	tenantCtx := hooks.SetTenantIDToContext(context.Background(), 1)
+	err := l.svcCtx.DB.OauthProvider.CreateBulk(providers...).Exec(tenantCtx)
 	if err != nil {
 		logx.Errorw(err.Error())
 		return errorx.NewInternalError(err.Error())
