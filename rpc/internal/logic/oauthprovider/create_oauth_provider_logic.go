@@ -31,7 +31,7 @@ func (l *CreateOauthProviderLogic) CreateOauthProvider(in *core.OauthProviderInf
 	// 🔐 加密client_secret
 	var encryptedSecret *string
 	var encryptionKeyID *string
-	
+
 	if in.ClientSecret != nil && *in.ClientSecret != "" {
 		encrypted, keyID, err := l.svcCtx.EncryptionService.EncryptProviderSecret(*in.ClientSecret)
 		if err != nil {
@@ -40,15 +40,16 @@ func (l *CreateOauthProviderLogic) CreateOauthProvider(in *core.OauthProviderInf
 		}
 		encryptedSecret = &encrypted
 		encryptionKeyID = &keyID
-		
+
 		// 清除明文密钥
 		in.ClientSecret = nil
 	}
-	
+
 	result, err := l.svcCtx.DB.OauthProvider.Create().
 		SetNotNilName(in.Name).
 		SetNotNilClientID(in.ClientId).
-		// SetNotNilClientSecret(in.ClientSecret). // ❌ 不再存储明文
+		// The legacy column is required; new credentials live only in encrypted_secret.
+		SetClientSecret("").
 		SetNotNilRedirectURL(in.RedirectUrl).
 		SetNotNilScopes(in.Scopes).
 		SetNotNilAuthURL(in.AuthUrl).
