@@ -70,7 +70,6 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 			return nil, errorx.NewCodeInvalidArgumentError("login.invalidTenant")
 		}
 		tenantInfo, err := l.svcCtx.CoreRpc.GetTenantById(l.ctx, &core.IDReq{Id: tenantIdUint})
-		logx.Info("租户信息：%v", tenantInfo)
 		if err != nil {
 			if e, ok := status.FromError(err); ok {
 				if e.Message() == i18n.TargetNotFound {

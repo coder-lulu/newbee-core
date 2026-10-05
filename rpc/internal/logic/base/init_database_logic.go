@@ -67,8 +67,8 @@ func (l *InitDatabaseLogic) InitDatabase(_ *core.Empty) (*core.BaseResp, error) 
 	defer lock.Release(l.ctx)
 
 	// initialize table structure
-	if err = l.svcCtx.DB.Schema.Create(systemCtx, schema.WithForeignKeys(false), schema.WithDropColumn(true),
-		schema.WithDropIndex(true)); err != nil {
+	// Initialization adds the current schema without removing existing columns or indexes.
+	if err = l.svcCtx.DB.Schema.Create(systemCtx, schema.WithForeignKeys(false)); err != nil {
 		logx.Errorw(logmsg.DatabaseError, logx.Field("detail", err.Error()))
 		_ = l.svcCtx.Redis.Set(l.ctx, "INIT:DATABASE:ERROR", err.Error(), 300*time.Second).Err()
 		return nil, errorx.NewInternalError(err.Error())
@@ -83,6 +83,9 @@ func (l *InitDatabaseLogic) InitDatabase(_ *core.Empty) (*core.BaseResp, error) 
 
 	// judge if the initialization had been done
 	check, err := l.svcCtx.DB.API.Query().Count(systemCtx)
+	if err != nil {
+		return nil, errorx.NewInternalError(err.Error())
+	}
 
 	if check != 0 {
 		err = l.svcCtx.Redis.Set(l.ctx, "INIT:DATABASE:STATE", "1", 24*time.Hour).Err()
