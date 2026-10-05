@@ -1,102 +1,215 @@
-# NewBee Core
+# 新蜂资产管理平台 — 核心服务
 
-> 基于 simple-admin-core 二次开发的多租户核心服务，但已经发生深度架构重构，与上游项目不再兼容。请在新项目中全量采用本文档的指引。
+新蜂资产管理平台的账号、租户和权限中心，提供用户与组织管理、角色和菜单、API 权限、数据权限、审计日志及 OAuth 接入能力。仓库包含 HTTP API 和 gRPC 两个服务，业务数据由 Ent 管理，公共中间件由 [newbee-common](https://github.com/coder-lulu/newbee-common) 提供。
 
-## 项目概览
+- [平台工作区与模块清单](https://github.com/coder-lulu/newbee)
+- [管理前端与前端部署说明](https://github.com/coder-lulu/newbee-ui)
+- [核心服务仓库](https://github.com/coder-lulu/newbee-core)
 
-NewBee Core 是 NewBee 平台的后台核心服务，提供多租户账号体系、权限与数据治理、审计追踪、OAuth 与第三方任务调度等能力。项目由两个 Go 可执行组件组成：
+## 目录与架构
 
-- `api/`：基于 go-zero `rest` 的 HTTP 服务，负责开放接口、认证、审计与租户态上下文管理。
-- `rpc/`：基于 go-zero `zrpc` 与 ent ORM 的 gRPC 服务，承载核心业务逻辑、RBAC 权限、数据权限控制与审计日志写入。
+| 路径 | 职责 |
+| --- | --- |
+| `api/` | HTTP 路由、认证、租户校验、数据权限、审计及 RPC 客户端 |
+| `rpc/` | 业务逻辑、Ent Schema、Casbin 策略与 OAuth 服务 |
+| `api/etc/core.yaml.example` | API 配置模板 |
+| `rpc/etc/core.yaml.example` | RPC 配置模板 |
+| `rpc/docs/` | 租户权限、初始化及 OAuth 加密说明 |
+| `deploy/` | 从上游保留的 Compose / Kubernetes 部署参考，使用前需要适配 |
+| `Makefile` | 构建、测试及代码生成命令 |
 
-核心依赖统一抽象在 [`github.com/coder-lulu/newbee-common`](https://github.com/coder-lulu/newbee-common) 中，可复用跨服务的中间件、配置、国际化与 Casbin 适配器实现。
+请求通过 API 层的统一中间件完成身份、租户和权限校验，再调用 RPC 执行业务操作。RPC 使用统一 Ent Hook 传播租户与部门上下文。核心服务与 CMDB、运维中心、统一 IO 等模块共同组成平台；单独启动核心服务不会启动这些业务模块。
 
-## 目录结构
+## 环境与源码
 
-```
-api/            # HTTP 服务入口、路由、Handler 与配置
-rpc/            # gRPC 服务、ent Schema、业务逻辑与插件
-deploy/         # Docker Compose 与 Kubernetes 示例部署文件
-docs/           # 核心治理指南（Casbin 迁移、初始化修复等）
-Makefile        # 常用开发命令（构建、测试、代码生成）
-go.mod          # 模块定义，使用 Go 1.25
-```
+以下命令以 Linux / Bash 为例。需要 Git、Go 1.25.1 或更高版本，以及可连接的 MySQL 和 Redis。首次空库初始化还需要 `grpcurl` 命令行工具。Protobuf、goctls、swagger 和 Ent 生成器仅在修改接口或重新生成代码时需要。
 
-更多细节：
-- `api/internal/svc/service_context.go`：整合 Casbin、Redis、RPC 客户端与统一中间件链，并提供审计资源缓存、降级策略等扩展能力。
-- `api/etc/core.yaml` & `rpc/etc/core.yaml`：默认配置模板，集中管理数据库、Redis、Casbin、统一中间件（认证、审计、租户校验、数据权限、权限校验、加密）等选项。
-- `deploy/docker-compose/*`：覆盖一体化部署、核心服务独立部署、存储与消息依赖（MySQL、PostgreSQL、Redis、RocketMQ 等）的基础编排文件。
-
-## 关键特性
-
-- **统一中间件框架**：通过 `newbee-common/middleware/integration` 集成认证、租户校验、数据权限、审计、权限判定、加密响应等插件，并支持优雅关闭与健康检查降级。
-- **审计增强**：异步审计写入、资源名缓存、真实客户端 IP 解析、响应体可选捕获，配置详见 `docs/COMMON_AUDIT_MIDDLEWARE_GUIDE.md`（位于上游 `common` 仓库）。
-- **多租户与数据权限**：依托 Casbin + 自研规则引擎，支持跨租户 API 权限与数据范围控制，相关迁移说明在 `docs/CASBIN_MIGRATION_*.md` 中。
-- **OAuth 与外部服务**：内建对 simple-admin-job、simple-admin-message-center、第三方 OAuth Provider 的客户端封装，可按需在配置中启用。
-- **可观测性**：Prometheus 指标端点默认开启，支持 Zipkin/OTLP 链路追踪（可在配置中打开 `Telemetry` 栏位）。
-
-## 环境要求
-
-- Go 1.25 及以上（项目 go.mod 已指定 1.25.1）。
-- MySQL / PostgreSQL / SQLServer（默认模板使用 MySQL），Redis 作为缓存与分布式锁。
-- Protobuf / go-zero 开发工具链（`goctls`、`swagger`、`ent`）。
-- 建议配套 NewBee 平台的 `common`、`nb-agent`、`ui` 子项目共同使用。
-
-## 快速开始
-
-1. **克隆仓库**（建议配合上层 `newbee` 单体仓库使用）。
-2. **准备配置**：复制 `api/etc/core.yaml`、`rpc/etc/core.yaml`，按环境修改数据库、Redis、`middleware.audit.realIpHeader` 等参数。
-3. **初始化数据库**：
-   - 启动 RPC 服务后访问 `POST /core/init/database` 完成基础数据初始化。
-   - 若需要同步 Job / 消息中心，请分别调用 `POST /core/init/job_database`、`POST /core/init/mcms_database`。
-4. **启动服务**：
-   ```bash
-   go run ./rpc/core.go   # 启动 RPC
-   go run ./api/core.go   # 启动 API
-   ```
-5. **验证健康状态**：访问 `/core/health`、`/metrics` 或使用 `curl` 检查主要接口。
-
-## 常用命令
+推荐克隆完整工作区，因为本仓库 `go.mod` 将 `newbee-common/v2` 替换为相邻的 `../common`，平台还通过根目录 `go.work` 管理其他本地模块：
 
 ```bash
-make fmt          # 格式化代码
-make test         # 运行 API 与 RPC 单元测试
-make lint         # 执行 golangci-lint（需先 make tools）
-make gen-api      # 基于 goctl 生成 API 代码 & Swagger
-make gen-rpc      # 基于 proto 生成 RPC 客户端/服务端
-make gen-ent      # 基于 ent schema 生成 ORM 代码
-make docker       # 构建 API/RPC Docker 镜像
+git clone --recurse-submodules https://github.com/coder-lulu/newbee.git
+cd newbee
+# 已经克隆过工作区时补全子模块：
+git submodule update --init --recursive
+cd core
 ```
 
-> 温馨提示：go-zero 配置支持 `ENV_VAR=value` 方式覆盖，生产环境请通过环境变量或配置中心注入敏感信息。
+后续源码命令均从 `newbee/core` 执行。依赖下载需要可用的 Go 模块源；不要直接复制上游 Simple Admin 的二进制或数据库替代当前代码。
 
-## 配置要点
+## 配置数据库与服务
 
-- `Middleware.audit`：必须根据部署环境设置 `realIpHeader`，并评估是否开启 `captureResponseBody`。
-- `Middleware.permission` / `Middleware.dataPerm`：依赖 RPC Casbin 策略，禁用时会影响 RBAC、数据隔离能力。
-- `CoreRpc` / `JobRpc` / `McmsRpc`：可按需启停，启用后需保证对应服务可用；API 服务内置健康降级防止雪崩。
-- `ProjectConf`：管理注册、登录、验证码策略及默认租户实体。
-- `Encryption`：响应加密器默认启用，务必替换生产密钥。
+1. 在 MySQL 中预先创建 `newbee` 数据库和专用服务账号，并授予初始化建表与后续业务所需权限。下面的初始化逻辑创建表和基础数据，不负责创建数据库实例。
+2. 准备 Redis，API 与 RPC 应连接到一致的实例和逻辑库，以共享缓存、初始化状态和策略通知。
+3. 复制模板，修改本地配置：
 
-## 部署参考
+```bash
+cp api/etc/core.yaml.example api/etc/core.yaml
+cp rpc/etc/core.yaml.example rpc/etc/core.yaml
+```
 
-- `deploy/docker-compose/all_in_one`：一次性拉起核心依赖，用于本地联调或 PoC。
-- `deploy/docker-compose/core-only`：适合已有基础设施的环境，仅运行核心 API/RPC。
-- `deploy/k8s`：提供 Kubernetes 部署样板，需结合实际集群调整 ConfigMap / Secret。
-- `kill_core.sh`：快速释放调试端口（默认 9100/9101 系列）。
+这两个 `core.yaml` 文件已被 Git 忽略。模板中的内网地址、示例密码和加密参数都需要替换为当前环境值。
 
-## 与 simple-admin-core 的差异
+| 配置项 | 设置方式 |
+| --- | --- |
+| 两端 `DatabaseConf` | 配置相同的 MySQL Host、Port、DBName、Username、Password |
+| 两端 `RedisConf` | 配置 Host、Pass、Db；未显式指定 Db 时使用默认库 |
+| API `CoreRpc.Target` | 单机为 `127.0.0.1:9100`；跨机改为 RPC 的内网地址 |
+| RPC `ListenOn` | 单机建议 `127.0.0.1:9100`，跨机按内网监听地址配置 |
+| API `Host` / `Port` | 单机反向代理部署建议 `127.0.0.1` / `9101` |
+| API `Middleware.auth.accessSecret` | 设置部署环境自己的 JWT 密钥，并与需要校验同一令牌的业务服务保持一致 |
+| API `Middleware.encryption` | 首次部署保持前端请求加密关闭，服务端不强制加密；完成客户端解密配置与联调后再启用 |
+| RPC `EncryptionKey` | OAuth Provider 凭据的加密密钥；设置独立的 32 字节密钥并持久保存 |
+| API `CROSConf.Address` | 按实际前端域名配置；生产环境不要沿用模板的 `*` |
+| API `JobRpc` / `McmsRpc` | 模板默认禁用；只有部署对应服务后才启用并设置 Target |
+| 两端 `Mode` | 初始化和本地调试可用 `dev`；正式运行设为 `pro` |
 
-- 升级为 `newbee-common` 提供的统一中间件、配置、国际化与插件管理，替换了 simple-admin-core 原有的散装接入方式。
-- 审计、权限、数据域、租户管理均经过重构，与上游路由、配置项、数据库初始化流程存在差异，不支持直接覆盖式升级。
-- RPC 层新增插件体系、健康降级与缓存策略，多数逻辑文件经过重写；Ent Schema 也根据 NewBee 平台需求扩展了字段与 Hook。
-- 配套 `docs/` 与 `deploy/` 目录提供新的运维指引，与 simple-admin-core 文档结构不兼容。
+模板采用 RPC 直连，基础单机部署不需要 etcd。只有自行改为基于 etcd 的服务发现时才需要部署并配置 etcd。
 
-因此，请将 NewBee Core 视为全新品类服务，只保留 simple-admin-core 的基础理念和部分协议，而非可回滚的分支。
+两端入口均调用 `conf.UseEnv()`，会展开 YAML 中的 `${变量名}`。这不等于任意环境变量都会自动覆盖同名配置。当前模板使用以下变量，请通过运行环境或服务管理器注入真实值：
+
+```text
+CORE_API_ETC_CORE_YAML_PASSWORD
+CORE_RPC_ETC_CORE_YAML_PASSWORD
+CORE_API_ETC_CORE_YAML_ACCESSSECRET
+```
+
+其他敏感项也可以在本地 YAML 中改成 `${自定义变量名}` 后注入。两端数据库密码应与数据库账号对应。
+
+## 首次初始化与本地运行
+
+空数据库的启动顺序是 **RPC → 初始化 → API**。API 启动时就会通过 RPC 加载 Casbin 策略，空库直接启动 API 可能因策略表不存在而失败。
+
+首次建表和写入基础数据可能超过模板中的 RPC 超时。初始化前临时将 `rpc/etc/core.yaml` 的 `Timeout` 从 `30000` 调整为 `300000`（毫秒），完成后恢复正常超时并重启 RPC。下方 `grpcurl -max-time 300` 只设置客户端超时，不能覆盖服务端配置。
+
+先在一个终端加载环境变量并启动 RPC：
+
+```bash
+go run ./rpc/core.go -f ./rpc/etc/core.yaml
+```
+
+在另一个终端、同样从 `core` 目录执行一次初始化：
+
+```bash
+grpcurl -plaintext -max-time 300 -import-path ./rpc -proto core.proto \
+  -d '{}' 127.0.0.1:9100 core.Core/initDatabase
+```
+
+该方法名来自 `rpc/core.proto`，大小写需保持一致。显式传入 proto 无需依赖反射服务。RPC 的初始化接口必须仅在受控内网或本机访问，不能暴露到公网。
+
+初始化会执行 Ent Schema 创建及租户、部门、角色、用户、菜单、API 和权限基础数据写入。**当前逻辑启用了删除列和索引的 Schema 选项，不能把初始化接口当作已有生产库的无损升级命令。** 已有数据库先备份并审查 Schema 差异。
+
+若调用超时，先检查 RPC 日志和数据库状态；初始化代码使用后台上下文，返回超时后写库仍可能继续，不要立即重复执行。确认 RPC 日志和初始化响应成功后，在加载 API 环境变量的终端启动 API：
+
+```bash
+go run ./api/core.go -f ./api/etc/core.yaml
+```
+
+已运行的 API 也提供 `GET /core/init/database`，受 `ProjectConf.AllowInit` 控制。首次初始化完成后，在 API 配置中显式添加以下配置并重启 API：
+
+```yaml
+ProjectConf:
+  AllowInit: false
+```
+
+该开关只控制 HTTP 初始化入口，不会关闭 RPC 方法，RPC 网络隔离仍然必要。初始化用户由 [初始化代码](rpc/internal/logic/base/init_database_logic.go) 的 `insertUserData` 定义，首次登录后修改初始密码；不要把初始账号用于公开演示环境。
+
+模板端口如下，若调整配置应同时修改调用方和反向代理：
+
+| 服务 | 端口 | 用途 |
+| --- | --- | --- |
+| Core RPC | 9100 | 内部 gRPC |
+| Core API | 9101 | HTTP 业务接口 |
+| RPC Prometheus | 4100 | `/metrics` |
+| API Prometheus | 4101 | `/metrics` |
+
+```bash
+curl --fail http://127.0.0.1:4100/metrics
+curl --fail http://127.0.0.1:4101/metrics
+```
+
+指标端点可用于确认进程可响应，完整验收还需通过前端检查登录、租户切换、权限及业务查询。当前业务路由未定义 `/core/health`，请勿把该路径作为存活检查。
+
+## Linux 生产部署
+
+### 编译和运行目录
+
+在完整工作区中构建 Linux 二进制（示例为 amd64）：
+
+```bash
+mkdir -p bin
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags='-s -w' -o bin/newbee-core-rpc ./rpc/core.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags='-s -w' -o bin/newbee-core-api ./api/core.go
+```
+
+将二进制安装到 `/opt/newbee/core/bin/`，把准备好的配置安装到 `/etc/newbee/core/rpc.yaml` 和 `/etc/newbee/core/api.yaml`。创建无登录权限的 `newbee` 系统用户，使其可以读取配置并写入所配置的日志目录。配置和环境文件按最小权限管理。
+
+### systemd 示例
+
+下面是部署时创建的示例文件 `/etc/systemd/system/newbee-core-rpc.service`；使用前先完成上面的数据库初始化：
+
+```ini
+[Unit]
+Description=Newbee Asset Management Platform Core RPC
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=newbee
+Group=newbee
+WorkingDirectory=/opt/newbee/core
+EnvironmentFile=/etc/newbee/core/core.env
+ExecStart=/opt/newbee/core/bin/newbee-core-rpc -f /etc/newbee/core/rpc.yaml
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+
+另建 `/etc/systemd/system/newbee-core-api.service`，复制上述内容，将 Description 和 ExecStart 改为 API，并在 `[Unit]` 增加 `After=newbee-core-rpc.service`。API 的启动命令为：
+
+```ini
+ExecStart=/opt/newbee/core/bin/newbee-core-api -f /etc/newbee/core/api.yaml
+```
+
+`/etc/newbee/core/core.env` 使用 `变量名=值` 的 systemd 环境文件格式，填写前述三个变量及本地配置新增的变量；仅授权管理员访问。启动并检查：
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now newbee-core-rpc
+sudo systemctl enable --now newbee-core-api
+sudo systemctl status newbee-core-rpc newbee-core-api
+sudo journalctl -u newbee-core-rpc -u newbee-core-api -n 100 --no-pager
+```
+
+systemd 的 `After` 仅保证进程启动顺序，数据库和 RPC 的可用性还要通过日志与业务请求验证。对外入口交给带 HTTPS 的 Nginx，前端 API 前缀与路径转发配置见 [前端部署说明](https://github.com/coder-lulu/newbee-ui)。RPC、数据库、Redis 和指标端口保留在内网。
+
+### 现有 Docker / Kubernetes 文件的适用范围
+
+`deploy/docker-compose/` 和 `deploy/k8s/` 包含从 Simple Admin 保留的历史模板，部分使用 `ryanpower/core-*-docker` 等上游镜像，端口和配置与当前代码不同。它们需要替换为本项目自行构建的镜像并校对配置后才能使用。
+
+当前 Makefile 的 `make docker` 引用根目录 `Dockerfile-api` / `Dockerfile-rpc`，但仓库中没有这两个文件，因此本 README 使用可核对的源码二进制部署方式，不将旧 Compose 描述为当前项目的一键部署入口。
+
+## 开发与相关文档
+
+```bash
+go test ./api/... ./rpc/...  # 部分测试需要外部服务，按测试配置准备环境
+make gen-api                # 需要 goctls 和 swagger
+make gen-rpc                # 需要 Protobuf / goctls 工具链
+make gen-ent                # 按 Schema 生成 Ent 代码
+```
+
+- [租户 API 权限初始化](rpc/docs/TENANT_API_PERMISSION_INIT.md)
+- [数据库初始化与租户 ID 修复说明](rpc/docs/INIT_DATABASE_FIX.md)
+- [OAuth Provider 凭据加密](rpc/docs/OAUTH_PROVIDER_ENCRYPTION.md)
+- [公共组件与统一中间件](https://github.com/coder-lulu/newbee-common)
+
+本说明依据当前入口、配置模板和初始化代码整理。数据库、Redis、域名和网络条件不同，部署后仍需在目标环境完成业务验收。
 
 ## 界面预览
 
-以下是 NewBee Core 服务配合前端界面的实际运行效果：
+以下为新蜂资产管理平台核心服务配合管理前端的界面示例：
 
 ### 系统管理
 <div align="center">
@@ -147,14 +260,6 @@ make docker       # 构建 API/RPC Docker 镜像
   <p>登录日志 - 登录行为监控</p>
 </div>
 
-## 相关文档
+## 上游与许可证
 
-- `docs/CASBIN_MIGRATION_GUIDE.md`：Casbin 迁移全流程指南。
-- `docs/INIT_DATABASE_TABLE_FIX_REPORT.md`：初始化数据修复记录。
-- `rpc/docs/TENANT_API_PERMISSION_INIT.md`：租户 API 权限初始化说明。
-- 更多审计、中间件使用说明请参考 `newbee-common` 仓库中的《统一审计中间件指南》《统一数据权限中间件指南》。
-
-## 许可证
-
-项目遵循 Apache License 2.0，与 simple-admin-core 保持一致；若引入第三方资源，请遵循其各自许可证要求。
-
+本仓库基于 [Simple Admin Core](https://github.com/suyuan32/simple-admin-core) 开发，遵循与上游一致的 [Apache License 2.0](LICENSE)，保留上游版权与许可证声明。新蜂资产管理平台已调整租户、权限、中间件和数据结构，部署及升级请以本仓库代码和配置为准。第三方依赖与资源遵循各自许可证。
